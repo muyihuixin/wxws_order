@@ -1,0 +1,382 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>首页</title>
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <link href="../css/base.css" rel="stylesheet"/>
+	<script src="../ajax/base.js"></script>
+    <style>
+    	html,body,.content{
+    		width: 100%;
+    		height: 100%;
+    	}
+    	.content{
+    		background: url(../img/beijing.png) no-repeat;
+    		background-size: cover;
+    		overflow: hidden;
+    	}
+    	.open_title{
+    		margin-top: 60px;
+    		padding-top: .4rem;
+    		width: 100%;
+    		display: flex;
+    		justify-content: flex-end;
+    		padding-right: .7rem;
+    	}
+    	.open_titleBox{
+    		margin-left: .48rem;
+    	}
+    	.open_titleBox>div{
+    		float: left;    		
+    	}
+		.open_titleL{
+			width: .4rem;
+			height: .4rem;
+			border-radius: 50%;
+			margin-right: .15rem;
+		}
+		.open_room{
+			width: 100%;
+			height: 100%;
+			min-height: calc(60vh);
+			padding: .5rem 1.8rem .5rem 1.1rem;
+		}
+		.open_roomList{
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			justify-content:flex-start;
+		}
+		.open_roomBox{
+			width: 2rem;
+			height: 2rem;
+			border-radius: .08rem;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			color: #fff;
+			margin-bottom: .8rem;
+			margin-left: .9rem;
+		}
+		.open_active{
+			width: 2rem;
+			height: 2rem;
+			border-radius: .08rem;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			color: #fff;
+			margin-bottom: .8rem;
+			margin-left: .9rem;
+			opacity: .6;
+			box-shadow: 1px 1px 10px 1px #000;
+		}
+		.open_roomC{
+			width: 50%;
+		}
+		.open_roomC>img{
+			width: 100%;
+		}
+		.open_roomR{
+			font-size: .36rem;
+		}
+		.open_roomL{
+			font-size: .3rem;
+		}
+		/*弹框*/
+		.dialogBox{
+			position: absolute;
+			top: 0px;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color:rgba(0,0,0,.1);
+			z-index: 9999;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.dialog{
+			width: 7.8rem;
+			height: auto;
+			background-color: #fff;
+			margin-top: 60px;
+			border-radius: .2rem;
+			position: relative;
+		}
+		.dialog_close{
+			position: absolute;
+		    top: -.9rem;
+		    right: -.9rem;
+		    width: 2rem;
+		    height: 2rem;
+		    display: flex;
+		    justify-content: center;
+		    align-items: center;
+		}
+		.dialog_close>img{
+			width: .62rem;
+		}
+		.dialog_t{
+			text-align: center;
+			font-size: .42rem;
+			color: #18e0d7;
+			padding: .5rem 0rem .4rem 0rem;
+			background: url(../img/border.png) no-repeat  left bottom;
+			background-size: 100%;
+		}
+		.dialog_c{
+			padding: .3rem .9rem .4rem .9rem;
+		}
+		.dialog_c label{
+			font-size: .32rem;
+			color: #666;
+		}
+		.dialog_c input,select{
+			font-size: .32rem;
+			color: #666;
+			border: 1px solid #d2d2d2!important;
+			height: .63rem;
+			line-height: .63rem;
+			padding-left: .2rem!important;
+			box-sizing: border-box;
+		}
+		.dialog_c select{
+			height: .6rem;
+			line-height: .6rem;
+			background: url(../img/down.png) no-repeat;
+			background-size: 7%;
+			background-position: right 6% center;
+		}
+		.dialog_b{
+			width: 100%;
+			line-height: 1rem;
+			height: 1rem;
+			background-color: #18e0d7;
+			display: flex;
+			justify-content: space-between;
+			color: #fff;
+			font-size: .4rem;
+			border-radius:0rem  0rem .2rem .2rem;
+		}
+		.dialog_bl,.dialog_br{
+			width: 50%;
+			text-align: center;
+			background-color: #18e0d7;
+			color: #fff;
+		}
+		.mui-btn{
+			border: none;
+		}
+		.dialog_bl{
+			border-right: 1px solid #c9f8f6;
+		}
+		.dialog_bl.dialog_bl2{
+			border-right:none;
+			width: 100%;
+		}
+		/*小圆点*/
+		.mui-slider{
+			height: 100%;
+			min-height: calc(70vh);
+		}
+		.mui-slider-indicator{
+			bottom:100px;
+			padding-left: 40px;
+		}
+		.mui-slider-indicator .mui-active.mui-indicator{
+			background: #19ded8;
+		}
+		.mui-slider-indicator .mui-indicator{
+			background: #ccc;
+			box-shadow: none;
+			width: .25rem;
+			height: .25rem;
+		}
+		/*竖屏*/
+		.portrait .open_roomBox {
+    		/*//justify-content: space-around;*/
+		}
+		.portrait .mui-slider {
+    		min-height: calc(84vh);
+		}
+    </style>
+</head>
+<body>
+	<div id="vm">
+	<header class="mui-bar mui-bar-nav mui-bar-nav-bg">
+		<a id="icon-menu" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<span class="time">欢迎光临!&nbsp;&nbsp;&nbsp;&nbsp;{{newDay}}</span>
+		<h1 class="mui-title">开台</h1>
+	</header>
+	<div class="content">
+		<div class="open_title">
+			<div class="open_titleBox" @tap='tapRoomColor2'>
+				<div class="open_titleL" style='background:#000'></div>
+				<div class="open_titleR">全部</div>
+			</div>
+			<div class="open_titleBox" v-for='item in roomColor' @tap='tapRoomColor(item)'>
+				<div class="open_titleL" :style='{background:item=="占用"?"#ff5955":item=="空闲"?"#c2c2c2":item=="预订"?"#32e39f":item=="清理"?"#6c85ff":""}'></div>
+				<div class="open_titleR">{{item}}</div>
+			</div>
+		</div>
+		<div class="open_room">
+			<!--弹框-->
+			<div class="dialogBox" v-if="isDialog"> 
+				<div class="dialog">
+					<div class="dialog_close" @tap='isDialog=false'><img src="../img/close.png"/></div>
+					<div class="dialog_t">
+						开台
+					</div>
+					<div class="dialog_c">
+						<div class="mui-input-row">
+							<label>包间</label>
+							<input type="text" placeholder="普通输入框" v-model="roominfo.name" readonly="readonly">
+						</div>
+						<div class="mui-input-row">
+							<label>人数</label>
+							<select name="" v-model="dishesNum">
+								<option :value="item" v-for='item in userNnm'>{{item}}</option>
+							</select>
+							<!--<input type="number" placeholder="普通输入框" value="8" readonly="readonly">-->
+						</div>
+						<div class="mui-input-row">
+							<label>服务员</label>
+							<select name="" v-model="waiterNo">
+								<option :value="item.no" v-for='item in userName'>{{item.name}}</option>
+							</select>
+							<!--<input type="text" placeholder="普通输入框" readonly="readonly">-->
+						</div>
+					</div>
+					<div class="dialog_b">
+						<!--<div class="dialog_bl" @tap='okTap'>确定</div>
+						<div class="dialog_br" @tap='diancai'>点菜</div>-->
+						<button type="button" data-loading-icon="mui-spinner mui-spinner-custom" class="dialog_bl mui-btn" @tap='okTap'>确定</button>
+						<button type="button" data-loading-icon="mui-spinner mui-spinner-custom" class="dialog_br mui-btn" @tap='diancai'>点菜</button>
+					</div>
+				</div>
+			</div>
+			<!--弹框2-->
+			<div class="dialogBox" v-if="isDialog2"> 
+				<div class="dialog">
+					<div class="dialog_close" @tap='isDialog2=false'><img src="../img/close.png"/></div>
+					<div class="dialog_t">
+						登录
+					</div>
+					<div class="dialog_c">
+						<div class="mui-input-row">
+							<label>操作员</label>
+							<select name="" v-model="operatorNo">
+								<option :value="item.no" v-for='item in operatorList'>{{item.name}}</option>
+							</select>
+							<!--<input type="number" v-model="operatorNo" placeholder="请输入操作员编号" readonly="readonly">-->
+						</div>
+						<div class="mui-input-row">
+							<label>密码</label>
+							<!--<select name="" v-model="waiter" @change="chooseWaiterId($event)">
+								<option :value="item.no" v-for='item in userName'>{{item.name}}</option>
+							</select>-->
+							<input type="password" v-model="operatorPW" placeholder="请输入操作密码">
+						</div>
+					</div>
+					<div class="dialog_b">
+						<button type="button" data-loading-icon="mui-spinner mui-spinner-custom" class="dialog_bl dialog_bl2 mui-btn" @tap='openRoom'>确定</button>
+						<!--<div class="dialog_bl dialog_bl2" @tap='openRoom'>确定</div>-->
+					</div>
+				</div>
+			</div>
+			<!--滑动翻页-->
+			<div class="mui-slider" v-if='isorient'>
+			  <div class="mui-slider-group">
+			    <div class="mui-slider-item">
+			    	<div class="open_roomList" v-if='roomList.slice(0,18).length>0'>
+				    	<div :class="i==index?'open_active':'open_roomBox'" v-if='isorient' v-for='(item,index) in roomList.slice(0,18)'  :style='{background:item.status=="占用"?"#ff5955":item.status=="空闲"?"#c2c2c2":item.status=="预订"?"#32e39f":item.status=="清理"?"#6c85ff":""}' @tap='showDialog(item,index)'>
+							<div class="open_roomL">{{item.maxGuestAmount}}</div>
+							<div class="open_roomC"><img src="../img/dining.png"/></div>
+							<div class="open_roomR">{{item.name}}</div>
+						</div>
+					</div>
+			    </div>
+			    <div class="mui-slider-item" v-if='roomList.slice(18,36).length>0'>
+			    	<div class="open_roomList">
+			    		<div :class="i==index?'open_active':'open_roomBox'" v-if='isorient' v-for='(item,index) in roomList.slice(18,36)'  :style='{background:item.status=="占用"?"#ff5955":item.status=="空闲"?"#c2c2c2":item.status=="预订"?"#32e39f":item.status=="清理"?"#6c85ff":""}' @tap='showDialog(item,index)'>
+							<div class="open_roomL">{{item.maxGuestAmount}}</div>
+							<div class="open_roomC"><img src="../img/dining.png"/></div>
+							<div class="open_roomR">{{item.name}}</div>
+						</div>
+					</div>
+			    </div>
+			    <div class="mui-slider-item" v-if='roomList.slice(36,54).length>0'>
+			    	<div class="open_roomList">
+				    	<div :class="i==index?'open_active':'open_roomBox'" v-if='isorient' v-for='(item,index) in roomList.slice(36,54)'  :style='{background:item.status=="占用"?"#ff5955":item.status=="空闲"?"#c2c2c2":item.status=="预订"?"#32e39f":item.status=="清理"?"#6c85ff":""}' @tap='showDialog(item,index)'>
+							<div class="open_roomL">{{item.maxGuestAmount}}</div>
+							<div class="open_roomC"><img src="../img/dining.png"/></div>
+							<div class="open_roomR">{{item.name}}</div>
+						</div>
+					</div>
+			    </div>
+			    <div class="mui-slider-item"  v-if='roomList.slice(54,72).length>0' >
+			    	<div class="open_roomList">
+				    	<div :class="i==index?'open_active':'open_roomBox'" v-for='(item,index) in roomList.slice(54,72)'  :style='{background:item.status=="占用"?"#ff5955":item.status=="空闲"?"#c2c2c2":item.status=="预订"?"#32e39f":item.status=="清理"?"#6c85ff":""}' @tap='showDialog(item,index)'>
+							<div class="open_roomL">{{item.maxGuestAmount}}</div>
+							<div class="open_roomC"><img src="../img/dining.png"/></div>
+							<div class="open_roomR">{{item.name}}</div>
+						</div>
+					</div>
+			    </div>
+			  </div>
+			  <!--小圆点-->
+			  <div class="mui-slider-indicator">
+					<div class="mui-indicator  mui-active" v-if='roomList.slice(0,18).length>0'></div>
+					<div class="mui-indicator" v-if='roomList.slice(18,36).length>0'></div>
+					<div class="mui-indicator" v-if='roomList.slice(36,54).length>0' ></div>
+					<div class="mui-indicator" v-if='roomList.slice(54,72).length>0' ></div>
+				</div>
+			</div>
+			<!--滑动翻页-->
+			<div class="mui-slider" v-if='!isorient'>
+			  <div class="mui-slider-group">
+			    <div class="mui-slider-item">
+			    	<div class="open_roomList" v-if='roomList.slice(0,60).length>0'>
+				    	<div :class="i==index?'open_active':'open_roomBox'" v-for='(item,index) in roomList.slice(0,60)'  :style='{background:item.status=="占用"?"#ff5955":item.status=="空闲"?"#c2c2c2":item.status=="预订"?"#32e39f":item.status=="清理"?"#6c85ff":""}' @tap='showDialog(item,index)'>
+							<div class="open_roomL">{{item.maxGuestAmount}}</div>
+							<div class="open_roomC"><img src="../img/dining.png"/></div>
+							<div class="open_roomR">{{item.name}}</div>
+						</div>
+					</div>
+			    </div>
+			    <div class="mui-slider-item" v-if='roomList.slice(60,120).length>0'>
+			    	<div class="open_roomList">
+			    		<div :class="i==index?'open_active':'open_roomBox'" v-for='(item,index) in roomList.slice(60,120)'  :style='{background:item.status=="占用"?"#ff5955":item.status=="空闲"?"#c2c2c2":item.status=="预订"?"#32e39f":item.status=="清理"?"#6c85ff":""}' @tap='showDialog(item,index)'>
+							<div class="open_roomL">{{item.maxGuestAmount}}</div>
+							<div class="open_roomC"><img src="../img/dining.png"/></div>
+							<div class="open_roomR">{{item.name}}</div>
+						</div>
+					</div>
+			    </div>
+			  </div>
+			  <!--小圆点-->
+			  <div class="mui-slider-indicator">
+					<div class="mui-indicator  mui-active" v-if='roomList.slice(0,60).length>0'></div>
+					<div class="mui-indicator" v-if='roomList.slice(60,120).length>0'></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>	
+	</body>
+<script src="../js/jquery-1.11.1.min.js"></script>
+<script src="../js/mui.min.js"></script>
+<script src="../js/base.js"></script>
+<script src="../js/vue.min.js"></script>
+<script src="../ajax/base.js"></script>
+<script src="../ajax/open.js"></script>
+<script type="text/javascript" >
+  	
+</script>
+
+</html>

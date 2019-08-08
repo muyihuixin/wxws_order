@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>详情</title>
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <link href="../css/base.css" rel="stylesheet"/>
+    <link href="../css/dishesDetail.css" rel="stylesheet"/>
+    <link href="../css/swiper.min.css" rel="stylesheet"/>
+    <style>
+.swiper-container{
+	width: 100%;
+	height: 100%;
+	padding-top: 60px;
+	box-sizing: border-box;
+	background-color: #fff;
+}
+.swiper-button-next, .swiper-button-prev{
+	background: #ccc;
+}
+.swiper-slide2{
+	background-color: #000;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.swiper-slide2>img{
+	width: 100%;
+	height: auto;
+}
+.landscape .swiper-slide2>img{
+	height: 100%;
+	width: auto;
+}
+.video{
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+}
+.swiper-slide > .img{
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.swiper-slide > .img >img{
+	width: 100%;
+}
+[v-clock]{
+	display: none;
+}
+    </style>
+</head>
+<body  onload="onLoad()">
+	<script type="text/javascript">
+		console.time()	
+	</script>
+
+<div id="vm">
+	<header class="mui-bar mui-bar-nav mui-bar-nav-bg">
+		<a id="icon-menu" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<span class="time">欢迎光临!&nbsp;&nbsp;&nbsp;&nbsp;{{newDay}}</span>
+		<h1 class="mui-title">点菜</h1>		
+	</header>
+	<!--<div class="content">-->
+		<div class="swiper-container swiper1" v-if='!isBigImg' v-clock :style='bodyHeight'>
+		    <div class="swiper-wrapper" id='swiper'>
+		      <div class="swiper-slide">
+		      	<div class="dishes_detail">
+					<div class="dishes_detailL" @tap='getBigImg(dishesDetail.src,dishesDetail.kindNo,dishesDetail.no)'>
+						<img :src="dishesDetail.src?dishesDetail.src:'../img/kongbig.png'" alt="" />
+						<div class="img" v-if='radioList.length>0'></div>
+						<div class="imgList"  v-if='radioList.length>0'>
+							<div class="shipin"><img src="../img/btn-bofang1@2x.png" alt="" />视频</div>
+							<div class="tupian" @tap='tupian'>图片</div>
+						</div>
+					</div>
+					<div class="dishes_detailR">
+						<div class="dishes_title">
+							<div class="t_name">{{dishesDetail.name}}</div>
+							<div class="t_price">RMB<b>{{dishesDetail.price.substring(0,dishesDetail.price.length-2)}}</b></div>
+						</div>
+						<div class="dishes_contrast">
+							<div class="c_title">介绍</div>
+							<div class="c_content">{{dishesDetail.description?dishesDetail.description:'暂无介绍~'}}</div>
+						</div>
+						<div class="dishes_taste">
+							<div class="taste_name">口味</div>
+							<div class="taste_classify">
+								<div v-if='tasetOneArr.length<1&&tasetAllArr.length<1'>暂无口味~</div>
+								<span :class='{taste_active:item.isTaste}' v-for='(item,index) in tasetOneArr' @tap='changeColorOne(index)'>{{item.name}}</span>
+								<span :class='{taste_active:item.isTaste}' v-for='(item,index) in tasetAllArr' @tap='changeColor(index)'>{{item.name}}</span>
+								
+							</div>
+						</div>
+						<div class="dishes_other">
+							<div class="other_name">其他</div>
+							<div class="other_content">
+								<input type="text" v-model="remark" @focus="keyup" placeholder="输入内容" />
+							</div>
+						</div>
+						<div class="dishes_number">
+							<div class="m-sel m-de-check">
+								<span @tap='reduction'>
+									<b>-</b>
+								</span>
+								
+								<input type="number" v-model="dishesDetail.num" readonly/>
+								<span @tap="add">
+									<b>+</b>
+								</span>
+							</div>
+							<div class="disthes_btn" @tap='addBtn'>添加</div>
+						</div>
+					</div>
+				</div>
+		      </div>
+		    </div>
+		    <!--<div class="swiper-wrapper">
+		    	<div class="swiper-slide"></div>
+		    </div>-->
+		    <!-- Add Pagination -->
+		    <!--<div class="swiper-pagination swiper-pagination-white"></div>-->
+		    <!--<div class="swiper-pagination swiper-pagination1"></div>-->
+		    <!-- Add Arrows -->
+		    <!--<div class="swiper-button-next swiper-button-white"></div>
+		    <div class="swiper-button-prev swiper-button-white"></div>-->
+		  </div>
+
+
+	<!--</div>-->
+</div>	
+</body>
+
+<script src="../js/jquery-1.11.1.min.js"></script>
+<script src="../js/base.js"></script>
+<script src="../ajax/base.js"></script>
+<script src="../js/vue.min.js"></script>
+<script src="../js/mui.min.js"></script>
+<script src="../js/swiper.min.js"></script>
+
+<script src="../ajax/detail.js"></script>
+<script>
+var start = new Date().getTime();
+function onLoad() {
+  var now = new Date().getTime();
+  var latency = now - start;
+console.log("加载时间" + latency);
+  console.timeEnd()
+}
+</script>
+</html>

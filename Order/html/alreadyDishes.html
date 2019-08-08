@@ -1,0 +1,170 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>点菜</title>
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <link href="../css/base.css" rel="stylesheet"/>
+    <link href="../css/alreadyDishes.css" rel="stylesheet"/>
+    <style>
+
+
+    </style>
+</head>
+<body>
+<div id="vm">
+	<header class="mui-bar mui-bar-nav mui-bar-nav-bg">
+		<a id="icon-menu" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<span class="time">欢迎光临!&nbsp;&nbsp;&nbsp;&nbsp;2019-05-23</span>
+		<h1 class="mui-title">点菜</h1>
+	</header>
+		<!--弹框2-->
+	<div class="dialogBox" v-if="isDialog2"> 
+		<div class="dialog">
+			<div class="dialog_close" @tap='closeBox'><img src="../img/close.png"/></div>
+			<div class="dialog_t">
+				下单
+			</div>
+			<div class="dialog_c">
+				<div class="mui-input-row">
+					<label>操作员</label>
+					<select name="" v-model="operatorNo">
+						<option :value="item.no" v-for='item in operatorList'>{{item.name}}</option>
+					</select>
+				</div>
+				<div class="mui-input-row">
+					<label>密码</label>
+					<input type="password" v-model="operatorPW" placeholder="请输入操作密码" />
+				</div>
+			</div>
+			<div class="dialog_b">
+				<button type="button" data-loading-icon="mui-spinner mui-spinner-custom" class="dialog_bl dialog_bl2 mui-btn" @tap='openRoom'>确定</button>
+			</div>
+		</div>
+	</div>
+	<div class="content">
+		<div class="dishes_l" :style="heightChange">
+			<div class="dishes_lt">
+				<img src="../img/logo.png"/>
+			</div>
+			<div class="dishes_lb">
+				<div class="dishes_name">
+					<span>包间：{{RoomName}}</span>
+					<span>人数：{{dishesNum}}</span>
+					<span class="circle"></span>
+				</div>
+				<div class="dishes_classify">
+					<ul>
+						<li @tap='allBigClassify' v-if='dishesClassify.length>1' :class="allBig==-1?'bigclassify_active':''"><img src="../img/kong.png"/>全部({{dishesList2.length}})</li>
+						<li v-for="(item,index) in dishesClassify" @tap='chooseBigClassify(item.no,index)' :class="allBig==index?'bigclassify_active':''"> 
+						<img :src="item.src" v-if='item.src!=""'/>
+						<img src="../img/kong.png" v-else />{{item.name}}({{ item.no | formatDate}})</li>
+					</ul>
+				</div>
+				<div class="dishes_circle">
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+				</div>
+				<div class="dishes_sort">
+					<div class="dishes_order">
+						<div class="img">
+						<img src="../img/btn-yidian@2x.png"/>
+						<span class="number">{{totalNumber}}</span>
+						</div>
+						<span>已点</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--/右侧-->
+		<div class="dishes_r" :style="heightChange">
+			<div class="table mui-content" :style="heightChange">
+				<div class="thead mui-row">
+					<ul>
+						<li style='width:10%'>序号</li>
+						<li style='width:15%'>图片</li>
+						<li style='width:20%'>菜名</li>
+						<li style='width:10%'>数量</li>
+						<li style='width:15%'>价格</li>
+						<li style='width:10%'>种类</li>
+						<li style='width:10%'>口味</li>
+						<li style='width:10%'>状态</li>
+					</ul>
+				</div>
+				<div class="tbody mui-row" style="padding-bottom: 60px;">
+					<ul>
+						<li :style="heightChange2" v-if='dishesList.length<1'>暂无数据！</li>
+						<li v-for="(item,index) in dishesList" v-if='item.amount>0||item.sendBillSign!=2||item.sendBillSign!=3' class="mui-table-view-cell mui-transitioning">
+							<div class="del mui-slider-right mui-disabled" v-if='item.sendBillSign!=2||item.sendBillSign!=3'>
+								<a @tap='deleteOrder(item,index)' v-if='item.sendBillSign!=2||item.sendBillSign!=3' class="mui-btn mui-btn-red" style="transform: translate(0px, 0px);">删除</a>
+							</div>
+							<div class="content mui-slider-handle">
+								<span class="one" style='width:10%'>{{index+1}}</span>
+								<span class="img" style='width:15%'><img :src="item.src?item.src:'../img/kong.png'" alt="" /></span>
+								<span class="name" style='width:20%'>{{item.dishName}}</span>
+								<span class="" style='width:10%'>
+									<div class="m-sel m-de-check">
+										<span @tap='reduction(item,index)' v-if="item.amount!=0">
+											<b>-</b>
+										</span>
+										
+										<input type="number" v-model="item.amount" readonly/>
+										<span @tap="add(item,index)">
+											<b>+</b>
+										</span>
+									</div>
+								</span>
+								<span class="" style='width:15%'>￥{{item.money.substring(0,item.money.length-2)}}</span>
+								<span class="" style='width:10%' v-for='i in cityClassify' v-if='i.no == item.kindNo'>{{i.name?i.name:'无'}}</span>
+								<span class="" style='width:10%' v-if='!item.kindNo'>无</span>
+								<span class="" style='width:10%'>{{item.remark?item.remark:'无'}}</span>
+								<span class="chooseBox" style='width:10%'   @tap="checkedOne(index)">
+									<input name="checkbox2" type="checkbox" id="checkbox_a1" class="chk_1" ref='input1' v-model="item.checked" :value="item.checked" v-if='item.sendBillSign!=2&&item.sendBillSign!=3'>
+									<!--<input name="checkbox2" type="checkbox" id="checkbox_a1" class="chk_1" ref='input1' v-model='checkboxList' :value="item" v-if='item.sendBillSign!=2&&item.sendBillSign!=3' @tap="item.checked=!item.checked">-->
+									<!--<input name="checkbox2" value="Item2" type="checkbox" class="checkbox2" v-model='checkboxList' :value="item.text">-->
+									<label for="checkbox_a1" v-if='item.sendBillSign!=2&&item.sendBillSign!=3'></label> 
+									{{item.sendBillSign==2?'已即单':item.sendBillSign==3?'已叫单':''}}
+								</span>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="total_box">
+				<div class="left mui-input-row mui-checkbox mui-left">
+					<input name="checkbox1" :value="checked" type="checkbox" id="checkbox_a1" class="chk_1"  v-model='checked' @tap='checkedAll' >
+					<!--<input name="checkbox1" value="Item1" type="checkbox" id="checkbox_a1" class="chk_1"  v-model='checked' @tap='checkedAll' >-->
+					<!--<input name="checkbox1" value="Item1" type="checkbox" class="checkbox1"  v-model='checked' v-on:click='checkedAll' >-->
+					<div class="companyName">全选</div>
+				</div>
+				<div class="total_money">总金额:<b>￥{{totalPrice}}</b></div>
+				<div class="continue_order" @tap='addDishes'>继续点菜</div>
+				<div class="jidan" @tap='jidan'>即单</div>
+				<div class="jiaodan" @tap='jiaodan'>叫单</div>
+			</div>
+		</div>
+	</div>
+</div>	
+</body>
+<script src="../js/vue.min.js"></script>
+<script src="../js/jquery-1.11.1.min.js"></script>
+<script src="../js/base.js"></script>
+<script src="../js/mui.min.js"></script>
+<script src="../ajax/base.js"></script>
+<script src="../ajax/already.js"></script>
+  
+</html>

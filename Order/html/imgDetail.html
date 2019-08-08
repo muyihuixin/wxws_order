@@ -1,0 +1,210 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>详情</title>
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <link href="../css/base.css" rel="stylesheet"/>
+    <link href="../css/swiper.min.css" rel="stylesheet"/>
+    <style>
+*{
+  /*touch-action: pan-y;*/
+  touch-action: none;
+}
+.swiper-container{
+	width: 100%;
+	height: 100%;
+	padding-top: 60px;
+	box-sizing: border-box;
+	background-color: #fff;
+}
+.swiper-button-next, .swiper-button-prev{
+	background: #ccc;
+}
+.swiper-slide2{
+	background-color: #000;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.swiper-slide2>img{
+	width: 100%;
+	height: auto;
+}
+.landscape .swiper-slide2>img{
+	height:80%;
+	width: auto;
+}
+.video{
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+}
+.swiper-slide > .img{
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.swiper-slide > .img >img{
+	width: 100%;
+}
+.swiper-pagination>span{
+	background-color: #fff;
+}
+    </style>
+</head>
+<body>
+<div id="vm">
+	<header class="mui-bar mui-bar-nav mui-bar-nav-bg">
+		<a id="icon-menu" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<span class="time">欢迎光临!&nbsp;&nbsp;&nbsp;&nbsp;{{newDay}}</span>
+		<h1 class="mui-title">点菜</h1>		
+	</header>
+	<div class="swiper-container swiper2" >
+	    <div class="swiper-wrapper">
+	           <div class="swiper-slide swiper-slide2" v-for='item in radioList'>
+	           	<div class="video" >
+	           		<video width="100%" height="400" controls>
+					  <source :src="item" type="video/mp4">
+					  <source src="movie.ogg" type="video/ogg">
+					  您的浏览器不支持 HTML5 video 标签。
+					</video>
+	           </div>
+	           </div>
+	           <div class="swiper-slide swiper-slide2" v-for='item in imgList'>
+	           	<div class="swiper-zoom-container" >
+	           		<img :src="item"/>
+	           	</div>
+	           </div>
+	    </div>
+	    <div class="swiper-pagination swiper-pagination2"></div>
+	</div>
+</div>	
+</body>
+<script src="../js/jquery-1.11.1.min.js"></script>
+<script src="../js/base.js"></script>
+<script src="../js/mui.min.js"></script>
+<script src="../js/vue.min.js"></script>
+<script src="../js/swiper.min.js"></script>
+<script src="../ajax/base.js"></script>
+<script>
+mui.init()
+var data = new Date();
+var month = data.getMonth()+1<10?'0'+(data.getMonth()+1):data.getMonth()+1;	
+var year = data.getFullYear();
+var day = data.getDate()<10?'0'+data.getDate():data.getDate();
+var newDay = year + '-' + month + '-' + day;
+var vm = new Vue({ 
+	"el":'#vm',
+	data:{
+		num:1,
+		newDay:'',
+		imgList:[],
+		radioList:[],
+		swiper2:null,
+	},
+	created(){
+		this.newDay = newDay
+	},
+	mounted(){
+	   mui.plusReady(()=>{
+			var self = plus.webview.currentWebview()
+			let str = self.str
+			this.radioList = []
+			this.imgList = []
+			//查所有图片和视频
+			this.getRangeData("personImg","name", IDBKeyRange.bound("dish/"+str,"dish/"+str+'-9',false,false));
+			this.getRangeDataRadio("personImg","name", IDBKeyRange.bound("av/"+str,"av/"+str+'-9',false,false));
+			this.$nextTick(()=>{
+			    console.log(vm.imgList.length)
+			    console.log(vm.radioList.length)
+				this.swiper2 = new Swiper('.swiper2.swiper-container', {//再获取到数据之后初始化swiper
+			      spaceBetween: 30,
+			      effect: 'fade',
+			      zoom:true,
+			       loop: false, 
+			      observer:true,//修改自己或子元素时自动初始化
+				  observerParents:true,//修改父元素时自动初始化
+				  on: {
+			           slideChange: function () {
+	                // 获取当前活动下标
+	                var index = this.realIndex;
+	                vm.index2 = index
+	                console.log(index);
+	            	}
+		     	},
+			      pagination: { // 如果需要分页器
+			        el: '.swiper-pagination2',
+			        dynamicBullets: true,
+			      },
+			   });			
+		    	this.swiper2.slideTo(0, 1000, false);//切换到第一个slide，速度为1秒o
+			})
+		})		
+	},
+	methods:{
+		getRangeData(storeName, index, range) { //存储空间名，索引，检索范围---查找图片
+		    indexedDB.open("demoDb").onsuccess = function (e) {
+		        var db = e.target.result;
+//		        console.log(e.target.result)
+		        var objectStore = db.transaction(storeName).objectStore(storeName).index(index);
+		        objectStore.openCursor(range).onsuccess = function (e) {//使用游标
+		            var cursor = e.target.result;
+		            if (cursor) {
+		                console.log(cursor.value)
+		                vm.imgList.push(cursor.value.data)
+		                cursor.continue(); //游标移动到下一个位置
+		            }
+		        }
+		    }
+		},
+		getRangeDataRadio(storeName, index, range) { //存储空间名，索引，检索范围---查找视频
+			
+		    indexedDB.open("demoDb").onsuccess = function (e) {
+		        var db = e.target.result;
+//		        console.log(e.target.result)
+		        var objectStore = db.transaction(storeName).objectStore(storeName).index(index);
+		        objectStore.openCursor(range).onsuccess = function (e) {//使用游标
+		            var cursor = e.target.result;
+		            if (cursor) {
+		                console.log(cursor.value)
+		                vm.radioList.push(cursor.value.data)
+		                cursor.continue(); //游标移动到下一个位置
+		            }
+		        }
+		    }
+		}
+	}
+})
+
+//js判断屏幕横竖屏：
+function orient() {
+//	console.log(window.orientation)
+    //;
+    if (window.orientation == 0 || window.orientation == 180) {
+        $("body").attr("class", "portrait");  //当竖屏的时候为body增加一个class
+        orientation = 'portrait';
+        return false;
+    }
+    else if (window.orientation == 90 || window.orientation == -90) {
+        $("body").attr("class", "landscape"); //当横屏的时候为body移除这个class
+        orientation = 'landscape';
+            return false;
+        }
+    }
+   
+   
+    $(function(){
+        orient();
+    });
+
+    $(window).bind( 'orientationchange', function(e){
+    orient();
+});
+
+</script>
+</html>

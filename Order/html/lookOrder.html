@@ -1,0 +1,258 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>查单</title>
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <link href="../css/base.css" rel="stylesheet"/>
+    <link href="../css/alreadyDishes.css" rel="stylesheet"/>
+    <style>
+	.dishes_order>.img{
+		display: flex;
+		width: 40px;
+		height: 40px;
+		align-items: center;
+	}
+	.mui-btn-red{
+		background-color: #17e1d6;
+	}
+	/*弹框*/
+	.dialogBox{
+		position: fixed;
+		top: 0px;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color:rgba(0,0,0,.1);
+		z-index: 999999;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	.dialog{
+		width: 7.8rem;
+		height: auto;
+		background-color: #fff;
+		margin-top: 60px;
+		border-radius: .2rem;
+		position: relative;
+	}
+	.dialog_close{
+		position: absolute;
+		top: -.8rem;
+		right: -.2rem;
+		width: .62rem;
+	}
+	.dialog_close>img{
+		width: 100%;
+	}
+	.dialog_t{
+		text-align: center;
+		font-size: .42rem;
+		color: #18e0d7;
+		padding: .5rem 0rem .4rem 0rem;
+		background: url(../img/border.png) no-repeat  left bottom;
+		background-size: 100%;
+	}
+	.dialog_c{
+		padding: .3rem .9rem .4rem .9rem;
+	}
+	.dialog_c label{
+		font-size: .32rem;
+		color: #666;
+	}
+	.dialog_c input,select{
+		font-size: .32rem;
+		color: #666;
+		border: 1px solid #d2d2d2!important;
+		height: .63rem;
+		line-height: .63rem;
+		padding-left: .2rem!important;
+		box-sizing: border-box;
+	}
+	.dialog_c select{
+		height: .6rem;
+		line-height: .6rem;
+		background: url(../img/down.png) no-repeat;
+		background-size: 7%;
+		background-position: right 6% center;
+	}
+	.dialog_b{
+		width: 100%;
+		line-height: 1rem;
+		height: 1rem;
+		background-color: #18e0d7;
+		display: flex;
+		justify-content: space-between;
+		color: #fff;
+		font-size: .4rem;
+		border-radius:0rem  0rem .2rem .2rem;
+	}
+	.dialog_bl{
+		width: 100%;
+		text-align: center;
+	}
+	
+	/*/横向显示/*/
+	.portrait .jidan{
+		width:140px!important;
+	}
+	.portrait .dialog{
+		width:240px!important;
+	}
+    </style>
+</head>
+<body>
+	<div id="vm">
+	<header class="mui-bar mui-bar-nav mui-bar-nav-bg">
+		<a id="icon-menu" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<span class="time">欢迎光临!&nbsp;&nbsp;&nbsp;&nbsp;{{newDay}}</span>
+		<h1 class="mui-title">查单</h1>
+		<!--<div class="search">
+			<input type="text" />
+			<img src="../img/btn-sousuo@2x.png"/>
+		</div>-->
+	</header>
+	<div class="content">
+		<div class="dishes_l"  :style="heightChange">
+			<div class="dishes_lt">
+				<img src="../img/logo.png"/>
+			</div>
+			<div class="dishes_lb">
+				<div class="dishes_name">
+					<span>包间：{{RoomName}}</span>
+					<span>人数：{{dishesNum}}</span>
+					<span class="circle"></span>
+				</div>
+				<div class="dishes_classify">
+					<ul>
+						<li @tap='allBigClassify' v-if='dishesClassify.length>1' :class="allBig==-1?'bigclassify_active':''"><img src="../img/kong.png"/>全部({{dishesList2.length}})</li>
+						<li v-for="(item,index) in dishesClassify" @tap='chooseBigClassify(item.no,index)' :class="allBig==index?'bigclassify_active':''"> 
+						<img :src="item.src" v-if='item.src!=""'/>
+						<img src="../img/kong.png" v-else />{{item.name}}({{ item.no | formatDate}})</li>
+					</ul>
+				</div>
+				<div class="dishes_circle">
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+				</div>
+				<div class="dishes_sort">
+					<div class="dishes_order">
+						<div class="img">
+						<img src="../img/btn-tuncai@2x.png"/>
+						<!--<span class="number">12</span>-->
+						</div>
+						<span>退菜</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--弹框-->
+		<div class="dialogBox" v-if="isDialog"> 
+			<div class="dialog">
+				<div class="dialog_close" @tap='isDialog=false'><img src="../img/close.png"/></div>
+				<div class="dialog_t">
+					退菜原因
+				</div>
+				<div class="dialog_c">
+					<div class="mui-input-row">
+						<label>原因</label>
+						<input type="text" placeholder="普通输入框" v-model="remark" readonly="readonly">
+					</div>
+					<div class="mui-input-row">
+						<label>数量</label>
+						<!--<select name="" v-model="dishesNum">
+							<option :value="item" v-for='item in userNnm'>{{item}}</option>
+						</select>-->
+						<input type="number" v-model="tuicaiNumber">
+					</div>
+					<div class="mui-input-row">
+						<label>操作员</label>
+						<select name="" v-model="operatorNo">
+							<option :value="item.no" v-for='item in operatorList'>{{item.name}}</option>
+						</select>
+						<!--<input type="number" v-model="operatorNo" placeholder="请输入操作员编号" readonly="readonly">-->
+					</div>
+					<div class="mui-input-row">
+						<label>密码</label>
+						<!--<select name="" v-model="waiter" @change="chooseWaiterId($event)">
+							<option :value="item.no" v-for='item in userName'>{{item.name}}</option>
+						</select>-->
+						<input type="password" v-model="operatorPW" placeholder="请输入操作密码">
+					</div>
+				</div>
+				<div class="dialog_b">
+					<div class="dialog_bl" @tap='okTap'>确定</div>
+				</div>
+			</div>
+		</div>
+		<!--/右侧-->
+		<div class="dishes_r">
+			<div class="table mui-content">
+				<div class="thead mui-row">
+					<ul>
+						<li style='width:10%'>序号</li>
+						<!--<li style='width:15%'>图片</li>-->
+						<li style='width:20%'>菜名</li>
+						<li style='width:14%'>数量</li>
+						<li style='width:14%'>价格</li>
+						<li style='width:14%'>种类</li>
+						<li style='width:14%'>口味</li>
+						<li style='width:14%'>状态</li>
+					</ul>
+				</div>
+				<div class="tbody mui-row">
+					<ul>
+						<li v-if='dishesList.length<1'>没有数据展示~</li>
+						<li v-for="(item,index) in dishesList" class="mui-table-view-cell mui-transitioning">
+							<div class="del mui-slider-right mui-disabled" @tap='tuicai(item.dishNo)'>
+								<a class="mui-btn mui-btn-red" style="transform: translate(0px, 0px);">退菜</a>
+							</div>
+							<div class="content mui-slider-handle">
+								<span class="one" style='width:10%'>{{index+1}}</span>
+								<!--<span class="img" style='width:15%'><img :src="item.src" alt="" /></span>-->
+								<span class="" style='width:20%'>{{item.name}}</span>
+								<span class="" style='width:14%'>
+									<div class="m-sel m-de-check">
+										<input type="number" v-model="Math.floor(item.amount)" readonly/>/{{item.monad}}
+									</div>
+								</span>
+								<span class="" style='width:14%'>￥{{item.price.substring(0,item.price.length-2)}}</span>
+								<span class="" style='width:14%'  v-for='i in cityClassify' v-if='i.no == item.kindNo'>{{i.name}}</span>
+								<span class="" style='width:14%'>{{item.remark?item.remark:'无'}}</span>
+								<span class="" style='width:14%'>{{item.status}}</span>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="total_box">
+				<div class="total_money">总数量:<b>{{totalNum}}</b></div>
+				<div class="total_money">总金额:<b>￥{{totalPrice}}</b></div>
+				<div class="jidan" @tap='addOrder'>继续点菜</div>
+			</div>
+		</div>
+	</div>
+</div>	
+</body>
+<script src="../js/jquery-1.11.1.min.js"></script>
+<script src="../js/base.js"></script>
+<script src="../js/mui.min.js"></script>
+<script src="../js/vue.min.js"></script>
+<script src="../ajax/base.js"></script>
+<script src="../ajax/look.js"></script>
+</html>

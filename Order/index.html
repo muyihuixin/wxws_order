@@ -1,0 +1,432 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>首页</title>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <link href="css/base.css" rel="stylesheet"/>
+    <style>
+    	html,body,.content{
+    		width: 100%;
+    		height: 100%;
+    	}
+    	body{
+    		/*background: url(img/beijing.png) no-repeat;
+    		background-size:cover;*/
+    		/*filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='img/beijing.png',sizingMethod='scale');*/
+    	}
+    	.content{
+    		background: url(img/beijing.png) no-repeat;
+    		background-size:cover;
+    		display: flex;
+    		flex-direction: column;
+    		justify-content: space-around;
+    		padding: 4% 0;
+    	}
+    	.content>.logo{
+    		width: 22%;
+    		margin: 0 auto;
+    	}
+    	.content>.logo>img{
+    		width: 100%;
+    	}
+    	.content>.menu{
+    		width: 100%;
+    		padding: 0px 9%;
+    		display: flex;
+    		justify-content: space-between;
+    	}
+    	.content>.menu>.menuBox{
+    		display: flex;
+    		flex-direction: column;
+    		justify-content: center;
+    		align-items: center;
+    		margin-left: 5%;
+    	}
+    	.content>.menu>.menuBox:first-child{
+    		margin-left: 0px;
+    	}
+    	.content>.menu>.menuBox>.menuLogo{
+    		margin-bottom: 3%;
+    		text-align: center;
+    	}
+    	.content>.menu>.menuBox>.menuLogo>img{
+    		width: 70%;
+    	}
+    	.content>.menu>.menuBox>.menuTitle{
+    		font-size: 28px;
+    		color: #333;
+    	}
+    	/*弹框*/
+		.dialogBox{
+			position: absolute;
+			top: 0px;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color:rgba(0,0,0,.1);
+			z-index: 9999;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.dialog{
+			width:10rem;
+			height: auto;
+			background-color: #fff;
+			margin-top: 60px;
+			border-radius: .2rem;
+			position: relative;
+		}
+		.dialog_close{
+			position: absolute;
+			top: -.15rem;
+			right: -.15rem;
+			width: .62rem;
+		}
+		.dialog_close>img{
+			width: 100%;
+		}
+		.dialog_t{
+			text-align: center;
+			font-size: .42rem;
+			color: #18e0d7;
+			padding: .5rem 0rem .4rem 0rem;
+			background: url(img/border.png) no-repeat  left bottom;
+			background-size: 100%;
+		}
+		.dialog_c{
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: .6rem 1rem .4rem 1rem;
+		}
+		.dialog_c>div{
+			width: 33.3%;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			align-items: center;
+			color: #666;
+			font-size: .32rem;
+			border-right:1px dashed #F2F2F2 ;
+			position: relative;
+		}
+		.dialog_dangan>.smallimg{
+			position: absolute;
+			top: -10px;
+    		right: 20px;
+			width: .35rem;
+			height: .35rem;
+		}
+		.dialog_dangan>.smallimg>img{
+			width: 100%;
+		}
+		.dialog_active{
+			color: #18E0D7;
+		}
+		.dialog_c>div:last-child{
+			border-right:none;
+		}
+		.dialog_c>div>.img{
+			width: 1.08rem;
+			margin-bottom: .37rem;
+		}
+		.dialog_c>div>.img>img{
+			width: 100%;
+		}
+		.dialog_b{
+			width: 100%;
+			line-height: 1rem;
+			height: 1rem;
+			background-color: #18e0d7;
+			display: flex;
+			justify-content: space-between;
+			color: #fff;
+			font-size: .4rem;
+			border-radius:0rem  0rem .2rem .2rem;
+		}
+		.dialog_bl,.dialog_br{
+			width: 50%;
+			text-align: center;
+		}
+		/*.dialog_br{
+			width: 100%;
+			text-align: center;
+		}*/
+		.dialog_bl{
+			border-right: 1px solid #c9f8f6;
+		}
+    	/*/竖屏显示/*/
+    	.portrait .logo{
+    		width: 30%;
+    	}
+    	.portrait .menu>.menuBox>.menuLogo>img{
+    		width: 100%;
+    	}
+    	.portrait .menu>.menuBox>.menuTitle{
+    		font-size: 20px;
+    	}
+    	/*进度条*/
+    	.mui-backdrop{
+    		display: flex;
+		    justify-content: center;
+		    align-items: center;
+		    width: 100%;
+		    padding: 0 4rem;
+    	}
+		 .progress{
+		 		width: 100%;
+			  height: 25px;
+			  background: #262626;
+			  padding: 5px;
+			  overflow: visible;
+			  border-radius: 20px;
+			  border-top: 1px solid #000;
+			  border-bottom: 1px solid #7992a8;
+			  margin-top: 50px;
+		  }
+		  .progress .progress-bar{
+			  border-radius: 20px;
+			  position: relative;
+			  animation: animate-positive 2s;
+		  }
+		  .progress .progress-value{
+			  display: block;
+			  padding: 3px 7px;
+			  font-size: 13px;
+			  color: #fff;
+			  border-radius: 4px;
+			  background: #191919;
+			  border: 1px solid #000;
+			  position: absolute;
+			  top: -40px;
+			    right: -95px;
+    			width: 120px;
+		  }
+		  .progress .progress-value:after{
+			  content: "";
+			  border-top: 10px solid #191919;
+			  border-left: 10px solid transparent;
+			  border-right: 10px solid transparent;
+			  position: absolute;
+			  bottom: -6px;
+			  left: 26%;
+		  }
+		  .progress-bar.active{
+			  animation: reverse progress-bar-stripes 0.40s linear infinite, animate-positive 2s;
+		  }
+		  @-webkit-keyframes animate-positive{
+			  0% { width: 0; }
+		  }
+		  @keyframes animate-positive{
+			  0% { width: 0; }
+		  }
+		.progress-bar-info{
+			background-color: #5bc0de;
+		}
+		.progress-striped .progress-bar, .progress-bar-striped{
+			background-image:linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+			background-size: 40px 40px
+		}
+		.progress-bar {
+	    float: left;
+	    width: 0;
+	    height: 100%;
+	    font-size: 12px;
+	    line-height: 20px;
+	    color: #fff;
+	    text-align: center;
+	    background-color: #337ab7;
+	    -webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+	    box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+	    -webkit-transition: width .6s ease;
+	    -o-transition: width .6s ease;
+	    transition: width .6s ease;
+	    }
+		
+    </style>
+</head>
+<body>
+<div class="content">
+	<div class="logo">
+		<img src="img/logo.png"/>
+	</div>
+	<div class="menu">
+		<div class="menuBox" v-for='item in menuList' @tap='jump(item.url)'>
+			<div class="menuLogo">
+				<img :src="item.src"/>
+			</div>
+			<div class="menuTitle">{{item.name}}</div>
+		</div>
+	</div>
+	<!--弹框-->
+	<div class="dialogBox" v-if="isDialog"> 
+		<div class="dialog">
+			<div class="dialog_close" @tap='isDialog=false'><img src="img/close.png"/></div>
+			<div class="dialog_t">
+				同步选项
+			</div>
+			<div class="dialog_c">
+				<div class="dialog_dangan" v-for="(item,index) in gengxin" @tap='item.isshow=!item.isshow'>
+					<div class="img"><img :src="item.isshow?item.src2:item.src" alt="" /></div>
+					<span :class="item.isshow?'dialog_active':''">{{item.name}}</span>
+					<div class="smallimg" v-if="item.isshow"><img src="img/btn-xuanzhong@2x.png" alt="" /></div>
+				</div>
+			</div>
+			
+			<div class="dialog_b">
+				<div class="dialog_bl" @tap='differentUpdate'>清除缓存</div>
+				<div class="dialog_br" @tap='allUpdate'>全部更新</div>
+			</div>
+		</div>
+	</div>
+	<!--进度条-->
+	<div class="mui-backdrop" v-if="isGengxin" @tap='closeGengxin'>
+		<div class="progress">
+			<div class="progress-bar progress-bar-info progress-bar-striped active" :style="{width: lineProgress+'%'}">
+				<div class="progress-value">已下载：{{lineProgress}}%</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<script src="js/jquery-1.11.1.min.js"></script>
+<script src="js/mui.min.js"></script>
+<script src="ajax/base.js"></script>
+<script src="ajax/index.js"></script>
+<script src="js/base.js"></script>
+<script src="js/vue.min.js"></script>
+<script type="text/javascript">
+mui.init();
+mui.plusReady(function(){                     
+    plus.webview.currentWebview().setStyle({
+        statusbar:{background:'#ff0000'},top:0,bottom: 0
+　　});
+});
+var vm = new Vue({
+	"el":'.content',
+	data:{
+		menuList:[{src:'img/kaitai@2x.png',name:'开台',url:'html/openRoom.html'},
+					{src:'img/diancan@2x.png',name:'点菜',url:'html/orderStar.html'},
+					{src:'img/chadan@2x.png',name:'查单',url:'html/orderRoom.html'},
+					{src:'img/zhuantai@2x.png',name:'转台',url:'html/zhuantai.html'},
+					{src:'img/tongbu@2x.png',name:'同步',url:''}//html/new_file4.html
+				],
+		gengxin:[{src:'img/btn-dangan1@2x.png',name:'档案',src2:'img/btn-dangan@2x.png',isshow:true},
+					{src:'img/btn-tupian@2x.png',name:'图片',src2:'img/btn-tupian1@2x.png',isshow:true},
+					{src:'img/btn-shiping@2x.png',name:'视频',src2:'img/btn-shiping1@2x.png',isshow:true},
+				],
+		isDialog:false,
+		isGengxin:false,
+		lineProgress:0,
+	},
+	watch:{
+		lineProgress(oldVal,newVal){
+			console.log(oldVal+'////'+newVal)
+			if(oldVal==100){
+				this.isGengxin = false 
+                mui.toast('更新成功')
+			}
+		}
+	},
+	methods:{
+		jump(url){
+			if(url!=''){
+				mui.openWindow({
+					url:url,
+					id: url,
+				})
+			}else{
+				this.isDialog=true
+			}	
+		},
+		closeGengxin(){//取消更新
+			console.log(this.lineProgress)
+			if(this.lineProgress==100){
+				this.isGengxin = false 
+			}else{
+				var btnArray = ['否', '是'];
+				mui.confirm('确定要取消更新吗？', '', btnArray, function(e) {
+	                if (e.index == 1) {
+	                    vm.isGengxin = false
+	                    return
+//	                    mui.toast('正在更新数据，请稍等...')
+	                } else {
+	                    vm.isGengxin = true 
+	                }
+	            })
+			}
+			
+		},
+		clearData(storename) {//必要时清空数据库
+		    let store = db.transaction(storename, 'readwrite').objectStore(storename);
+		    store.clear();
+		    mui.toast('数据已经清空')
+		},
+		differentUpdate (){
+			this.isDialog=false
+			this.clearData(personStore)
+			this.clearData(personStore2)
+		},
+		allUpdate (){
+			this.isDialog=false
+			this.isGengxin = true
+			//全部更新
+			getallTable().then(()=>{
+		 	 	getallWaiter().then(()=>{
+		 	 		getallBigDishesList().then(()=>{
+		 	 			getallSmallDishesList().then(()=>{
+		 	 				getallDishes().then(()=>{
+		 	 					getallTaste().then(()=>{
+		 	 						getalloperatorList().then(()=>{
+		 	 							addPersonImg()
+		 	 						})
+		 	 					})
+		 	 				})
+		 	 			})
+		 	 		})
+		 	 	})
+		 	})
+		},
+	}
+})
+
+//js判断屏幕横竖屏：
+function orient() {
+	console.log(window.orientation)
+    //;
+    if (window.orientation == 0 || window.orientation == 180) {
+        $("body").attr("class", "portrait");  //当竖屏的时候为body增加一个class
+        orientation = 'portrait';
+        return false;
+    }
+    else if (window.orientation == 90 || window.orientation == -90) {
+        $("body").attr("class", "landscape"); //当横屏的时候为body移除这个class
+        orientation = 'landscape';
+   
+            return false;
+        }
+    }
+   
+   
+    $(function(){
+        orient();
+    });
+    $(window).bind( 'orientationchange', function(e){
+    orient();
+});
+// 
+//  ipad： 90 或 -90 横屏
+//
+//  ipad： 0 或180 竖屏
+// 
+// Andriod：0 或180 竖屏
+// 
+//Andriod： 90 或 -90 横屏
+	</script>
+	
+</body>
+</html>

@@ -1,0 +1,60 @@
+{
+	"index.html": {
+		"refer": [
+			"html/openRoom.html",
+			"html/zhuantai.html",
+			"html/lookOrder.html",
+			"html/new_file2.html",
+			"html/new_file3.html",
+			"html/new_file4.html",
+			"html/orderRoom.html",
+			"html/orderStar.html"
+		],
+		"resources": []
+	},
+	"html/openRoom.html": {
+		"refer": [
+			"html/orderDishes.html"
+		],
+		"resources": []
+	},
+	"html/orderDishes.html": {
+		"refer": [
+			"html/dishesDetail.html",
+			"html/alreadyDishes.html"
+		],
+		"resources": [
+			"img/close.png"
+		]
+	},
+	"html/orderRoom.html": {
+		"refer": [
+			"html/lookOrder.html"
+		]
+	},
+	"html/alreadyDishes.html": {
+		"refer": [
+			"html/orderDishes.html"
+		]
+	},
+	"html/lookOrder.html": {
+		"refer": [
+			"html/orderDishes.html"
+		]
+	},
+	"html/zhuantai.html": {
+		"refer": [
+			"html/orderDishes.html"
+		]
+	},
+	"html/dishesDetail.html": {
+		"refer": [
+			"html/imgDetail.html"
+		]
+	},
+	"html/orderStar.html": {
+		"refer": [
+			"html/orderDishes.html"
+		]
+	}
+}

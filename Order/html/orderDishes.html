@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>点菜</title>
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <link href="../css/base.css" rel="stylesheet"/>
+    <link href="../css/orderDishes.css" rel="stylesheet"/>
+    <style>
+
+    </style>
+</head>
+<body>
+	<div id="vm">
+	<header class="mui-bar mui-bar-nav mui-bar-nav-bg">
+		<a id="icon-menu" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<span class="time">欢迎光临!&nbsp;&nbsp;&nbsp;&nbsp;{{newDay}}</span>
+		<h1 class="mui-title">点菜</h1>
+		<div class="search">
+			<input type="search" v-model="searchText" placeholder="请输入菜品首拼字母大写" @input='inputChange'/>
+			<img src="../img/btn-sousuo@2x.png"/>
+		</div>		
+	</header>
+	<!--<div class="keyBox" id='div' v-if='isKeybox'>
+		<div class="cancle" @tap='closeKey'><img src="../img/close.png"/></div>
+		<span id="" v-for="item in keyNums" :class='item=="OK"||item=="Del"?"okColor":""' @tap='keyDown(item)'>
+			{{item}}
+		</span>
+	</div>-->
+	<div class="content">
+		<div class="dishes_l" :style='heightChange2'>
+			<div class="dishes_lt">
+				<img src="../img/logo.png"/>
+			</div>
+			<div class="dishes_lb">
+				<div class="dishes_name">
+					<span>包间：{{RoomName}}</span>
+					<span>人数：{{dishesNum}}</span>
+					<span class="circle"></span>
+				</div>
+				<div class="dishes_classify">
+					<ul>
+						<li @tap='allBigClassify' v-if='dishesClassify.length>1' :class="allBig==-1?'bigclassify_active':''"><img src="../img/kong.png"/>全部</li>
+						<li v-for="(item,index) in dishesClassify" @tap='chooseBigClassify(item.no,index)' :class="allBig==index?'bigclassify_active':''"> 
+						<img :src="item.src" v-if='item.src!=""'/>
+						<img src="../img/kong.png" v-else />{{item.name}}</li>
+					</ul>
+				</div>
+				<div class="dishes_circle">
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+				</div>
+				<div class="dishes_sort">
+					<div class="dishes_order" @tap='already'>
+						<div class="img">
+						<img src="../img/btn-yidian@2x.png"/>
+						<span class="number" v-if='totalNumber'>{{totalNumber}}</span>
+						</div>
+						<span>已点</span>
+					</div>
+					<div class="dishes_choose" @tap='orderIndex'>
+						<div class="img"><img :src="flag==1?'../img/btn-qiehuan@2x.png':flag==2?'../img/btn-xiaoliang@2x.png':'../img/btn-caiming@2x.png'"/></div>
+						<span>{{flag==1?'价格':flag==2?'销量':'名称'}}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--/右侧-->
+		<div class="dishes_r" :style="heightChange">
+			<div class="dishes_rClassify">
+				<span v-if='cityClassify.length>1' @tap='allSmallClassify' :class="allSmall==-1?'dishes_active':''">全部</span>
+				<span v-if='cityClassify.length>1' v-for='(item,index) in cityClassify' :class="allSmall==index?'dishes_active':''" @tap='chooseSmallClassify(item.no,index)'>{{item.name}}</span>
+			</div>
+			<div class="dishes_rList" :style="heightChange">
+				<div class="box">
+					<div class="dishes_detail" v-for='(item,index) in dishesList22'>
+						<div class="img" @tap='jump(index,item)'><img :src="item.src?item.src:'../img/kong.png'" /></div>
+						<div class="name">{{item.name}}</div>
+						<div class="price">
+							<span>￥{{item.price.substring(0,item.price.length-2)}}</span>
+							<div class="m-sel m-de-check">
+								<span @tap='reduction(item,index)' :class="item.num<=0?'none':''" >
+									<b>-</b>
+								</span>
+								
+								<input type="number" v-model="item.num" readonly/>
+								<span @tap="add(item,index)">
+									<b>+</b>
+								</span>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>	
+</body>
+<script src="../js/jquery-1.11.1.min.js"></script>
+	<script src="../js/base.js"></script>
+	<script src="../js/mui.min.js"></script>
+    <script src="../js/vue.min.js"></script>
+    <script src="../ajax/base.js"></script>
+    <script src="../ajax/dishes.js"></script>
+    <script type="text/javascript">
+
+   
+	</script>
+</html>

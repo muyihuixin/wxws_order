@@ -1,0 +1,267 @@
+.content{
+	display: flex;
+	justify-content: center;
+	padding-top: 60px;
+	box-sizing: border-box;
+}
+.dishes_detail{
+	/*margin-top: 60px;*/
+	padding-left: .8rem;
+	padding-right: .8rem;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: #fff;
+}
+.dishes_detailL{
+	width: 60%;
+	height: 80%;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #000;
+	position: relative;
+}
+.dishes_detailL>.img{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	width: 1.1rem;
+	height: 1.1rem;
+	background: url(../img/btn-bofang@2x.png) no-repeat;
+	background-size: cover;
+	/*background-color: #17e1d6;*/
+	border-radius: 50%;
+}
+.dishes_detailL>.imgList{
+	position: absolute;
+	bottom:.6rem;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+.dishes_detailL>.imgList>div{
+	/*width: .48rem;
+	height: .96rem;*/
+}
+.dishes_detailL>.imgList>.shipin{
+	margin-right: .4rem;
+	background-color: #17e1d6;
+	color: #fff;
+}
+.dishes_detailL>.imgList>.shipin>img{
+	vertical-align: initial;
+	width: .15rem;
+	margin-right: 2px;
+}
+.dishes_detailL>.imgList>div{
+	background-color: #fff;
+	opacity: .7;
+	color: #333;
+	padding:0 .3rem;
+	font-size: .22rem;
+	border-radius: .3rem;
+}
+.dishes_detailL>img{
+	width: 101%;
+	display: inline-block;
+	vertical-align: middle;
+}
+.dishes_detailR{
+	height: 80%;
+	width:40%;
+	padding-left: .9rem;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: space-between;
+}
+.dishes_detailR>div{
+	margin-bottom: 14px;
+}
+.dishes_title{
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	flex: 1;
+	/*background-color: red;*/
+	height: 1rem;
+}
+.dishes_title>.t_name{
+	font-size: 20px;
+	color: #333;
+	/*background-color: red;*/	
+	max-width: 3rem;
+	/*min-width: 3rem;*/
+}
+.dishes_title>.t_price{
+	font-size: 22px;
+	color: #17e1d6;
+	padding-left: .82rem;
+}
+.dishes_title>.t_price>b{
+	font-size: 30px;
+}
+/*/介绍/*/
+.c_title,.taste_name,.other_name{
+	font-size:18px;
+	color: #333;
+	margin-bottom: 6px;
+}
+.dishes_contrast>.c_content{
+	font-size: 14px;
+	color: #333;
+	width: 100%;
+	min-height: 1rem;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp:4;
+	overflow: hidden;
+}
+.dishes_taste{
+	width: 100%;
+}
+.dishes_taste>.taste_classify{
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	/*background-color: red;*/
+	min-height: 1rem;
+	max-height: 2.5rem;
+	overflow-y: scroll;
+}
+.taste_classify>span{
+	width:30% ;
+	height: 26px;
+	border: 1px solid #D2D2D2;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 20px;
+	margin-bottom: .4rem;
+	font-size: 14px;
+	color: #333;
+}
+.taste_active{
+	color: #fff!important;
+	background: #17e1d6;
+	border:none!important;
+}
+.other_content{
+	width: 60%;
+	margin-left: 1rem;
+}
+.dishes_other{
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	margin-top: .5rem;
+}
+.other_content>input{
+	width: 100%;
+	height: 20px;
+	line-height: 20px;
+	font-size: 14px;
+	margin: 0;
+}
+.dishes_number{
+	width: 100%;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+}
+.m-sel{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	box-sizing: border-box;
+} 
+.m-de-check span{
+    width: .8rem;
+    height: .8rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.m-de-check b {
+	width: .6rem;
+	height:.6rem;
+	display: inline-block;
+	background: #17e1d6;
+	font-size: 16px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: #ffffff;
+	font-weight: 400;
+	border-radius: 50%;
+	box-sizing: border-box;
+}
+.m-de-check span:first-child b{
+	background: #fff;
+	color: #ccc;
+	border: 1px solid #ccc;
+}
+.m-de-check input {
+	text-align: center;
+	height: 30px;
+	outline: none;
+	border: none;
+	border-radius: 0;
+	color: #2A2A2A;
+	font-size: 16px;
+	padding: 0 .2rem;
+    max-width: .6rem;
+	margin-bottom: 0;
+}
+.disthes_btn{
+	margin-left: 1.5rem;
+	width: 90px;
+	height: 30px;
+	background-color: #17e1d6;
+	font-size: 14px;
+	color: #fff;
+	border-radius: 5px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+/*横向排列*/ 
+.portrait .dishes_detail{
+	flex-direction: column;
+	justify-content: flex-start;
+	padding: 0;
+}
+
+.portrait .dishes_detail>div{
+	width:100%;
+}
+.portrait .taste_classify>span{
+	width:18%;
+}
+.portrait .dishes_detail>.dishes_detailR{
+	padding-left: .8rem;
+	padding-right: .8rem;
+	padding-top: 1rem;
+}
+.portrait .dishes_detail>.dishes_detailL{
+	width: 100%;
+	height: 50%;
+	background-color: #000!important;
+}
+.portrait .m-de-check input{
+	max-width: 1rem;
+}
+.portrait .m-de-check b {
+	width:.8rem;
+	height:.8rem;
+}
+
