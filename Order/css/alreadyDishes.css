@@ -135,6 +135,9 @@ html,body,.content{
     justify-content: center;
     align-items: center;
 }
+.allChoose{
+	
+}
 /*//单选框*/
 .chooseBox{
 	display: flex;
@@ -243,8 +246,8 @@ html,body,.content{
 }
 .dishes_r>.table>.tbody{
 	width: 100%;
-	min-height: calc(72vh);
-	max-height: calc(72vh);
+	min-height: calc(69vh);
+	max-height: calc(69vh);
     overflow: auto;
     /*background-color: red;*/
 }
@@ -338,7 +341,7 @@ html,body,.content{
 	box-sizing: border-box;
 	width:76%;
 	display: flex;
-	justify-content: flex-end;
+	justify-content: space-around;
 	align-items: center;
 	padding: .3rem 0;
 	background-color: #fff;
@@ -346,6 +349,9 @@ html,body,.content{
 	box-shadow: 0px 0px 6px 0px #eee;
 }
 .total_box>div{
+	display: flex;
+}
+.total_box>div>div{
 	margin-right: .5rem;
 	width: 1.66rem;
 	height: .6rem;
@@ -357,12 +363,24 @@ html,body,.content{
 	font-size:16px;
 	border-radius: 4px;
 }
-.total_box>.total_money{
+.total_box .jidan{
+	margin-right: .5rem;
+	width: 1.66rem;
+	height: .6rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #17e1d6;
+	color: #fff;
+	font-size:16px;
+	border-radius: 4px;
+}
+.total_box .total_money{
 	width: 4rem;
 	background-color: #fff;
 	color: #333;
 }
-.total_box>.total_money>b{
+.total_box .total_money>b{
 	font-size: 20px;
 	color: #17e1d6;
 }
@@ -436,7 +454,7 @@ html,body,.content{
 }
 .landscape .total_box>div:first-child{
 	padding-left: .2rem;
-	position: absolute;
+	/*position: absolute;*/
 	left:.2rem;
 	display: flex;
 	justify-content: flex-end;

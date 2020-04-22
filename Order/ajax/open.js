@@ -18,13 +18,14 @@ var vm = new Vue({
 		roomListOpen:'',
 		RoomName:'',
 		userName:[],
-		userNnm:['8','10','12','14','20','25','30'],
 		isDialog:false,//弹框显示隐藏
 		isDialog2:false,
-		dishesNum:'',//用餐人数
+		dishesNum:8,//用餐人数
 		waiter:'',//服务员
 		waiterNo:'',//服务员id
-		roominfo:{},//包间信息
+		roominfo:{
+			prople:8,
+		},//包间信息
 		newDay:'',
 		isorient:0,//默认竖屏0，横屏1
 		operatorList:[],//操作员列表
@@ -36,16 +37,52 @@ var vm = new Vue({
 		ii:-1,
 	},
 	created(){
-		openIndexedDB(this.loadTableData);//获取数据
 		this.newDay = newDay
-		this.dishesNum = this.userNnm[0]
+		openIndexedDB(this.loadTableData);//获取数据
+		openIndexedDB(this.loadTableData_alltable);//获取所有餐桌数据
+		mui.plusReady(res=>{  
+			console.log(isNetWork())
+			if(!isNetWork()){  
+				//mui.toast('没有网络~');  
+				openIndexedDB(this.loadTableData_alltable);//获取所有餐桌数据
+			}else{
+				//获取所有餐桌信息
+				repcall('order/dishes/getAllTableList','',res=>{
+					console.log(res)
+					var arrTableList = []
+					if(res.code==0){
+						let arr = []
+						var arr2 = []
+						var arrLook = []
+						
+						this.roomList = res.data
+						this.roomList2 = res.data
+						this.putData(personStore, res.data)
+						this.roomList2.map(res=>{
+							if(arr2.indexOf(res.status) < 0){
+								arr2.push(res.status)
+							}
+							if(res.status=='空闲'){
+								arr.push(res)
+							}
+							if(res.status=='占用'){
+								arrLook.push(res)
+							}
+						})
+						vm.roomListOpen = arrLook
+						vm.roomColor = arr2//状态分类
+						vm.roomList = arr
+						console.log(vm.roomList)
+					}
+				})
+			}  
+		}); 
 	},
 	mounted () {
 
 	},
 	methods:{
-		//获取本地数据
-		loadTableData() {
+		loadTableData_alltable(){//获取本地数据--所有的餐桌
 			var trans = db.transaction(personStore, 'readonly');
 			var store = trans.objectStore(personStore);
 			//所有的餐桌
@@ -78,6 +115,12 @@ var vm = new Vue({
 			    // ...
 			  }
 			}
+		},
+		//获取本地数据
+		loadTableData() {
+			var trans = db.transaction(personStore, 'readonly');
+			var store = trans.objectStore(personStore);
+			var index = store.index('name');
 			//所有的服务员
 			var request_allWaiter = index.get('allWaiter');
 			
@@ -222,7 +265,7 @@ var vm = new Vue({
 			//开台
 			var data = {
 				  "guestAmount": this.dishesNum,//人数 ,
-				  "localNo": this.localNo,//手持设备编号 ,
+				  "localNo": localNo,//手持设备编号 ,
 				  "operatorNo": this.operatorNo,//操作员代码 ,
 				  "operatorPW": this.operatorPW,//密码
 				  "tableNo": this.roominfo.no,//餐桌代码
@@ -245,14 +288,24 @@ var vm = new Vue({
 		}
 	}
 })
-
+function isNetWork() {  
+    var NetStateStr = '未知';  
+    var types = {};  
+    types[plus.networkinfo.CONNECTION_UNKNOW] = "未知";  
+    types[plus.networkinfo.CONNECTION_NONE] = "未连接网络";  
+    types[plus.networkinfo.CONNECTION_ETHERNET] = "有线网络";  
+    types[plus.networkinfo.CONNECTION_WIFI] = "WiFi网络";  
+    types[plus.networkinfo.CONNECTION_CELL2G] = "2G蜂窝网络";  
+    types[plus.networkinfo.CONNECTION_CELL3G] = "3G蜂窝网络";  
+    types[plus.networkinfo.CONNECTION_CELL4G] = "4G蜂窝网络";  
+    NetStateStr = types[plus.networkinfo.getCurrentType()];  
+    return (NetStateStr === "未知") || (NetStateStr === "未连接网络") ? false : true;  
+}  
 	//js判断屏幕横竖屏：
 	$(function(){
         orient();
    });
 	function orient() {
-
-		console.log(window.orientation)
         //;
         if (window.orientation == 0 || window.orientation == 180) {
             $("body").attr("class", "portrait");  //当竖屏的时候为body增加一个class

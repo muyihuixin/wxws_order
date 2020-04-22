@@ -14,8 +14,12 @@ var month = data.getMonth()+1<10?'0'+(data.getMonth()+1):data.getMonth()
 var year = data.getFullYear();
 var day = data.getDate()<10?'0'+data.getDate():data.getDate();
 var newDay = year + '-' + month + '-' + day;
-window.addEventListener('refresh',function(e){//执行刷新
-	console.log('刷新')
+window.addEventListener('already',function(e){//监听already页面的返回事件执行刷新
+	console.log('alread页面返回刷新')
+	location.reload()
+})
+window.addEventListener('detail',function(e){//监听already页面的返回事件执行刷新
+	console.log('detail页面返回刷新')
 	location.reload()
 })
 var vm = new Vue({ 
@@ -50,34 +54,42 @@ var vm = new Vue({
 	},
 	created(){
 		openIndexedDB(this.loadTableData);
-		var takeOrderDtos = localStorage.getItem('takeOrderDtos')
-		if(takeOrderDtos!=''){
-			let takeOrderDtosObj = JSON.parse(takeOrderDtos)
-			this.takeOrderDtos = takeOrderDtosObj
-			this.takeOrderDtos.map(res=>{
-				this.totalNumber += res.amount
-			})
-			
-			console.log(this.totalNumber)
-		}
+		
 		let room = localStorage.getItem('room')//查单look页面传进来的
 		if(room!=''){
 			let rooms = JSON.parse(room)
+			console.log('点菜页面进来的')
 			console.log(JSON.stringify(rooms))
 			this.RoomName = rooms.name
 			this.dishesNum = rooms.maxGuestAmount
 			this.tableNo = rooms.no
+			//一个包间对应一个菜单---只要之前点过菜，但是没有提交都存在
+			var takeOrderDtos = localStorage.getItem(this.RoomName)?localStorage.getItem(this.RoomName):''
+			let takeOrderDtosObj = takeOrderDtos?JSON.parse(takeOrderDtos):[]
+			this.takeOrderDtos = takeOrderDtosObj
+			this.takeOrderDtos.map(res=>{
+				this.totalNumber += res.amount
+			})
+			console.log(this.totalNumber)
 		}
 		var openInfo = localStorage.getItem('openInfo')//点餐open页面传进来的
-		
 		if(openInfo!=''){
 			var openInfos = JSON.parse(openInfo)
+			console.log('开台页面进来的')
 			console.log(JSON.stringify(openInfos))
 			this.RoomName = openInfos.RoomName
 			this.dishesNum = openInfos.dishesNum
 			this.tableNo = openInfos.tableNo
 			this.status = openInfos.status
 			this.waiterNo = openInfos.waiterNo
+			//一个包间对应一个菜单---只要之前点过菜，但是没有提交都存在
+			var takeOrderDtos = localStorage.getItem(this.RoomName)?localStorage.getItem(this.RoomName):''
+			let takeOrderDtosObj = takeOrderDtos?JSON.parse(takeOrderDtos):[]
+			this.takeOrderDtos = takeOrderDtosObj
+			this.takeOrderDtos.map(res=>{
+				this.totalNumber += res.amount
+			})
+			console.log(this.totalNumber)
 		}
 	},
 	mounted () {
@@ -117,6 +129,7 @@ var vm = new Vue({
 				}
 			}
 		},
+
 		//获取本地数据
 		loadTableData() {
 			var trans = db.transaction(personStore, 'readonly');
@@ -131,7 +144,6 @@ var vm = new Vue({
 					Object.assign(item,{src:'',num:0})
 				}
 				result.data.map(res=>{
-					
 					let trans2 = db.transaction(personStore2, 'readonly');
 					let store2 = trans2.objectStore(personStore2);
 					let index2 = store2.index('name');
@@ -142,11 +154,16 @@ var vm = new Vue({
 						if (result) {
 							res.src=result.data
 						} else {
-							
-						    // ...
+
 						}
 					}
-					
+				})
+				result.data.map(res=>{
+					vm.takeOrderDtos.map(item=>{
+						if(res.name==item.dishName){
+							res.num = item.amount
+						}
+					})
 				})
 				vm.dishesList22 = result.data.slice(0,vm.pageSize)
 				vm.totalPage = Math.ceil(result.data.length/vm.pageSize)
@@ -236,10 +253,13 @@ var vm = new Vue({
 					}
 				}
 				console.log(this.takeOrderDtos)
-				localStorage.setItem('takeOrderDtos',JSON.stringify(this.takeOrderDtos))
+				
 				this.takeOrderDtos.map(res=>{
+					res.src = ''
 					this.totalNumber += res.amount
 				})
+				console.log(JSON.stringify(this.takeOrderDtos))
+				localStorage.setItem(this.RoomName,JSON.stringify(this.takeOrderDtos))
 			}
 		},
 		add(i,index){//菜品++
@@ -270,19 +290,33 @@ var vm = new Vue({
 					}
 				}
 				console.log(this.takeOrderDtos)
-				localStorage.setItem('takeOrderDtos',JSON.stringify(this.takeOrderDtos))
+				
 				let num = 0
 				this.takeOrderDtos.map(res=>{
+					res.src = ''
 					num += res.amount
 				})
+				localStorage.setItem(this.RoomName,JSON.stringify(this.takeOrderDtos))
 				this.totalNumber = num
 				console.log(this.totalNumber)
 			}
 		},
 		jump(index,item){//跳转至菜品详情
 			localStorage.setItem('id',index)
+			console.log(index+'///'+JSON.stringify(item))
 			localStorage.setItem('lunboObj',JSON.stringify(item))
-
+			 // 创建一个事务
+	 	 	var transaction = db.transaction(personStore, 'readwrite');
+	  		// 通过事务来获取store
+	  		var store = transaction.objectStore(personStore);
+			var addPersonRequest = store.put({ name: 'lunboObj',data:item,id:9});
+			addPersonRequest.onsuccess = function (e) {
+				//初始化//显示进度条//进度条加10
+			    console.log('更新成功');
+			}
+			addPersonRequest.onerror = function (e) {
+			    console.log('更新失败');
+			}
 			if(this.allBig!=-1&&this.allSmall==-1){
 				console.log(this.allBig)//根据大类查找菜品
 				var bigKindno = this.dishesClassify[this.allBig].no
@@ -303,13 +337,9 @@ var vm = new Vue({
 			}
 			localStorage.setItem('kindNo',kindNo)//小类
 			localStorage.setItem('bigKindno',bigKindno)//大类
-			 mui.openWindow({
+			mui.openWindow({
 				url:'dishesDetail.html',
 				id:'dishesDetail',
-//				extras:{
-//					index:index,
-//					item:item
-//				},
 				createNew:false,
 			})
 
@@ -324,7 +354,6 @@ var vm = new Vue({
 			}else{
 				mui.toast('请先点菜~')
 			}
-			
 		},
 		allBigClassify(){//获取全部菜品---大类
 			if(this.allBig == -1){

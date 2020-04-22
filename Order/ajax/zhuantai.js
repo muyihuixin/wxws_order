@@ -246,7 +246,7 @@ var newDay = year + '-' + month + '-' + day;
 					}
 					//开台
 					var data = {
-					  "localNo":this.localNo,//手持设备编号 ,
+					  "localNo":localNo,//手持设备编号 ,
 					  "newTableNo":this.oldTableNo,//新餐桌代码 ,
 					  "oldTableNo":this.newTableNo,//原餐桌代码 ,
 					  "operatorNo":this.operatorNo,//操作员代码 ,

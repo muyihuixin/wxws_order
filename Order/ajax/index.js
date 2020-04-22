@@ -109,7 +109,6 @@ function getallBigDishesList(){
 				    console.log('更新失败');
 				}
 				resolve(res)
-
 			}
 		})
 	})
@@ -165,7 +164,6 @@ function getallDishes(){
 				addPersonRequest.onerror = function (e) {
 				    console.log('更新失败');
 				}
-				
 			}
 		})
 	})
@@ -272,7 +270,6 @@ function addPersonImg(){
 				 	})
 				})
 			}
-			
 			if(res.data.av.length>0){
 				res.data.av.map((res)=>{
 					getBase64('av/'+res,length).then(res=>{

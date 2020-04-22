@@ -48,8 +48,8 @@ var vm = new Vue({
 			tableNo:this.tableNo
 		},res=>{
 			console.log(JSON.stringify(res))
+			//wt.close()
 			if(res.code==0){
-//				wt.close()
 				if(!res.data.checkSummary){
 					return
 				}
@@ -57,7 +57,7 @@ var vm = new Vue({
 				vm.dishesList2 = res.data.checkDetail
 				vm.RoomName = res.data.checkSummary.tableName
 				res.data.checkSummary.no=res.data.checkSummary.tableName
-				localStorage.setItem('takeOrderDtos','')
+				//localStorage.setItem('takeOrderDtos','')
 //				let roomObj = JSON.stringify(res.data.checkSummary).replace(/guestAmount/g,'maxGuestAmount').replace(/tableName/g,'name')
 //				localStorage.setItem('room',roomObj)
 				vm.dishesNum = res.data.checkSummary.guestAmount
@@ -67,9 +67,8 @@ var vm = new Vue({
 				})
 				
 			}else{
-				localStorage.setItem('takeOrderDtos','')
+				//localStorage.setItem('takeOrderDtos','')
 				mui.toast(res.msg)
-				wt.close()
 			}
 		})
 	},
@@ -205,16 +204,15 @@ var vm = new Vue({
 			}
 		},
 		okTap(){//确定退菜
-						
-			mui('.dialog_bl').button('loading');//切换为loading状态
 			if(this.operatorNo==''||this.operatorPW==''){
 				mui.toast('请输入操作员编码和密码~')
 				return
 			}
+			mui('.dialog_bl').button('loading');//切换为loading状态
 			let data = {
 				  "amount": this.tuicaiNumber,
 				  "dishNo": this.dishNo,
-				  "localNo": this.localNo,
+				  "localNo": localNo,
 				  "operatorNo":this.operatorNo,//操作员
 				  "operatorPW": this.operatorPW,//密码
 				  "remark": this.remark,
@@ -223,8 +221,8 @@ var vm = new Vue({
 			console.log(JSON.stringify(data))
 			repcallPost('order/dishes/foodBack',data,res=>{
 				console.log(JSON.stringify(res))
+				mui('.dialog_bl').button('reset');//切换为loading状态
 				if(res.code==0){
-					mui('.dialog_bl').button('reset');//切换为loading状态
 					this.isDialog=false
 					mui.toast(res.msg)
 					location.reload()

@@ -3,7 +3,7 @@ mui.init({
 	 //获得父页面的webview
 	var list = plus.webview.currentWebview().opener();
 	 //触发父页面的自定义事件(refresh),从而进行刷新
-	mui.fire(list, 'refresh');
+	mui.fire(list, 'already');
 	//返回true,继续页面关闭逻辑
 	 return true;
     }
@@ -38,44 +38,66 @@ var vm = new Vue({
 		dataArr:[],//提交的arr
 		isDisabled:false,
 		status:'',
+		xiadan : 0//1即单2叫单
 	},
 	created(){
 		openIndexedDB(this.loadTableData);
 		let room = localStorage.getItem('room')
 		if(room!=''){
 			let rooms = JSON.parse(room)
+			console.log('点菜页面进来的')
 			console.log(JSON.stringify(rooms))
 			this.RoomName = rooms.name
 			this.dishesNum = rooms.maxGuestAmount
 			this.tableNo = rooms.no
+			//一个包间对应一个菜单---只要之前点过菜，但是没有提交都存在
+			var takeOrderDtos = localStorage.getItem(this.RoomName)?localStorage.getItem(this.RoomName):[]
+			if(takeOrderDtos!=''){
+				this.dishesList = JSON.parse(localStorage.getItem(this.RoomName))
+				this.dishesList2 = JSON.parse(localStorage.getItem(this.RoomName))
+				this.dishesList2.map(res=>{
+					Object.assign(res,{'checked':false})
+				})
+				this.dishesList.map(res=>{
+					Object.assign(res,{'checked':false})
+					this.totalNumber+=res.amount
+					let price = res.amount*res.money
+					this.totalPrice+=price
+				})
+			}
+			console.log(this.dishesList2)
 		}
 		let openInfo = localStorage.getItem('openInfo')//点餐open页面传进来的
 		if(openInfo!=''){
 			var openInfos = JSON.parse(openInfo)
+			console.log('开台页面进来的')
 			console.log(JSON.stringify(openInfos))
 			this.RoomName = openInfos.RoomName
 			this.dishesNum = openInfos.dishesNum
 			this.tableNo = openInfos.tableNo
 			this.status = openInfos.status
 			this.waiterNo = openInfos.waiterNo
+			
+			//一个包间对应一个菜单---只要之前点过菜，但是没有提交都存在
+			var takeOrderDtos = localStorage.getItem(this.RoomName)?localStorage.getItem(this.RoomName):[]
+			if(takeOrderDtos!=''){
+				this.dishesList = JSON.parse(localStorage.getItem(this.RoomName))
+				this.dishesList2 = JSON.parse(localStorage.getItem(this.RoomName))
+				this.dishesList2.map(res=>{
+					Object.assign(res,{'checked':false})
+				})
+				this.dishesList.map(res=>{
+					Object.assign(res,{'checked':false})
+					this.totalNumber+=res.amount
+					let price = res.amount*res.money
+					this.totalPrice+=price
+				})
+			}
+			console.log(this.dishesList2)
 		}
 	},
 	mounted(){
-		let takeOrderDtos = localStorage.getItem('takeOrderDtos')
-		if(takeOrderDtos!=''){
-			this.dishesList = JSON.parse(localStorage.getItem('takeOrderDtos'))
-			this.dishesList2 = JSON.parse(localStorage.getItem('takeOrderDtos'))
-			this.dishesList2.map(res=>{
-				Object.assign(res,{'checked':false})
-			})
-			this.dishesList.map(res=>{
-				Object.assign(res,{'checked':false})
-				this.totalNumber+=res.amount
-				let price = res.amount*res.money
-				this.totalPrice+=price
-			})
-		}
-		console.log(this.dishesList2)
+		
 		
 	},
 	watch: { //深度 watcher  全选
@@ -119,7 +141,7 @@ var vm = new Vue({
 		},
 		checkedAll(){//全选
 			console.log('执行了没有'+this.checked)
-			this.checked=!this.checked
+			vm.checked=!this.checked
 			if (this.checked) {//实现反选---
 //      		this.checkboxList = [];
         		let arr1 = []
@@ -134,14 +156,25 @@ var vm = new Vue({
             }
 		},
 		allBigClassify(){//获取全部菜品---大类
+			console.log('全部')
 			if(this.allBig == -1){
 				return
 			}
-			this.dishesList = this.dishesList2
+			this.dishesList = this.dishesList2.filter(item => item.sendBillSign==0)
+			this.dishesList2 = this.dishesList2.filter(item => item.sendBillSign==0)
 			this.cityClassify = this.cityClassify2
 			this.allBig = -1
 			this.allSmall = -1
-			console.log(this.dishesList)
+			this.totalNumber = 0
+			this.totalPrice = 0
+			this.dishesList2.map((res,i)=>{
+				this.totalNumber+=res.amount
+				let price = res.amount*res.money
+				this.totalPrice+=price
+				res.src = ''
+			})
+			console.log(JSON.stringify(this.dishesList))
+			console.log(JSON.stringify(this.dishesList2))
 			console.log(this.dishesList.filter(item => item.checked===false).length)//
 			if(this.dishesList.filter(item => item.checked===false).length==0){
 				this.checked=true
@@ -153,6 +186,7 @@ var vm = new Vue({
 			if(this.allBig == index){
 				return
 			}
+			console.log('分类'+index)
 			this.allBig = index
 			let arr2 = []
 			this.dishesList = this.dishesList2
@@ -161,10 +195,14 @@ var vm = new Vue({
 					arr2.push(res)
 				}
 			})			
-//			this.allSmall = 0
 			this.dishesList = arr2
-			console.log(this.dishesList)
-			
+			console.log(JSON.stringify(this.dishesList))
+			this.totalPrice = 0
+			this.dishesList.map((res,i)=>{
+				let price = res.amount*res.money
+				this.totalPrice+=price
+				res.src = ''
+			})
 			console.log(this.dishesList.filter(item => item.checked===false).length)//
 			if(this.dishesList.filter(item => item.checked===false).length==0){
 				this.checked=true
@@ -184,11 +222,13 @@ var vm = new Vue({
 					this.dishesList2.splice(i, 1);
 				}
 			}
-			localStorage.setItem('takeOrderDtos',JSON.stringify(this.dishesList2))
+			localStorage.setItem(this.RoomName,JSON.stringify(this.dishesList2))
 			location.reload()
 		},
 		reduction(i,index) {//菜品--
 			i.amount--	
+			this.totalNumber = 0
+			this.totalPrice = 0
 			
 			if(this.allBig == -1){
 				console.log(this.dishesList)
@@ -197,46 +237,81 @@ var vm = new Vue({
 						this.dishesList.splice(i, 1);
 					}
 				}
-				localStorage.setItem('takeOrderDtos',JSON.stringify(this.dishesList))
-				location.reload()
+				console.log(JSON.stringify(this.dishesList))
+				this.dishesList.map(res=>{//总数和总价相应改变
+					this.totalNumber+=res.amount
+					let price = res.amount*res.money
+					this.totalPrice+=price
+					res.src = ''
+				})
+				this.dishesList2 = this.dishesList
+				localStorage.setItem(this.RoomName,JSON.stringify(this.dishesList))
+				//location.reload()
 			}else{
-				console.log(this.dishesList2)
+				console.log(JSON.stringify(this.dishesList2))
+				for(var i = 0; i < this.dishesList.length; i++) {
+					if(this.dishesList[i].amount == 0) {
+						this.dishesList.splice(i, 1);
+					}
+				}
 				for(var i = 0; i < this.dishesList2.length; i++) {
 					if(this.dishesList2[i].amount == 0) {
 						this.dishesList2.splice(i, 1);
 					}
 				}
-				
-				localStorage.setItem('takeOrderDtos',JSON.stringify(this.dishesList2))
-				location.reload()
+				console.log(JSON.stringify(this.dishesList2))
+				this.dishesList2.map(res=>{//总数和总价相应改变
+					this.totalNumber+=res.amount
+					let price = res.amount*res.money
+					this.totalPrice+=price
+					res.src = ''
+				})
+				localStorage.setItem(this.RoomName,JSON.stringify(this.dishesList2))
+				//location.reload()
 			}
 		},
 		add(i,index){//菜品++
 			i.amount++
+			this.totalNumber = 0
+			this.totalPrice = 0
 			if(this.allBig == -1){
-				localStorage.setItem('takeOrderDtos',JSON.stringify(this.dishesList))
-				location.reload()
+				console.log(JSON.stringify(this.dishesList))
+				this.dishesList.map(res=>{//总数和总价相应改变
+					this.totalNumber+=res.amount
+					let price = res.amount*res.money
+					this.totalPrice+=price
+					res.src = ''
+				})
+				localStorage.setItem(this.RoomName,JSON.stringify(this.dishesList))
+				//location.reload()
 			}else{
-				localStorage.setItem('takeOrderDtos',JSON.stringify(this.dishesList2))
-				location.reload()
+				console.log(JSON.stringify(this.dishesList2))
+				this.dishesList2.map(res=>{//总数和总价相应改变
+					this.totalNumber+=res.amount
+					let price = res.amount*res.money
+					this.totalPrice+=price
+					res.src = ''
+				})
+				localStorage.setItem(this.RoomName,JSON.stringify(this.dishesList2))
+				//location.reload()
 			}
 		},
 		addDishes(item){//继续点菜
 			mui.back()
 		},
 		openRoom(){//确定
-			mui('.dialog_bl').button('loading');//切换为loading状态
 			this.isDisabled = true
 			if(this.operatorNo==''||this.operatorPW==''){
 				mui.toast('请输入操作员编码和密码~')
 				return
 			}
-			//判断有没有开台
+			mui('.dialog_bl').button('loading');//切换为loading状态
+			//判断有没有开台--先开台同步更新数据--再提交下单
 			if(this.status=='空闲'){
 				//开台
 				var data = {
 					  "guestAmount": this.dishesNum,//人数 ,
-					  "localNo": this.localNo,//手持设备编号 ,
+					  "localNo": localNo,//手持设备编号 ,
 					  "operatorNo": this.operatorNo,//操作员代码 ,
 					  "operatorPW": this.operatorPW,//密码
 					  "tableNo": this.tableNo,//餐桌代码
@@ -245,11 +320,14 @@ var vm = new Vue({
 				console.log(JSON.stringify(data))
 				repcallPost('order/dishes/founding',data,res=>{
 					console.log(JSON.stringify(res))
-					if(res.code==0){
+					if(res.code==0){//开台成功
+						this.status=='占用'
 						repcall('order/dishes/getAllTableList','',res=>{
-							console.log(res)
+							console.log(JSON.stringify(res))
 							var arrTableList = []
 							if(res.code==0){
+								console.log('开台成功，直接下单')
+								vm.allXD()//开台失败可能是已经开过了
 								 // 创建一个事务
 						 	 	var transaction = db.transaction(personStore, 'readwrite');
 						  		// 通过事务来获取store
@@ -257,51 +335,91 @@ var vm = new Vue({
 								var addPersonRequest = store.put({ name:'allTable',data:res.data,id:6});
 								addPersonRequest.onsuccess = function (e) {
 								    console.log('更新成功');
-								    vm.xiadan()
 								}
-							}else{
-								mui.toast('请求失败,请退出重试')
 							}
 						})
 					}else{
-						mui.toast(res.data)
-						return
+//						mui.toast(res.msg)
+//						return
+						console.log('开台失败,直接下单456')
+						this.allXD()//开台失败可能是已经开过了
 					}
 				})
 			}else{
-				this.xiadan()
+				console.log('已开台，直接下单')
+				this.allXD()
 			}
 		},
-		xiadan(){//下单
+		allXD(){//下单---即单
+			let sendBillSign=this.xiadan==1?2:this.xiadan==2?3:''//2即单3叫单
+			
+			this.dataArr = []
+			this.dishesList.map(res=>{
+				if(res.checked){
+					res.remark = res.remark.toString()
+					this.del(res,['src','bigKindno','kindNo'])
+					res.sendBillSign=sendBillSign
+					this.dataArr.push(res)
+				}
+			})
 			console.log(JSON.stringify(this.dataArr))
+
+			console.log(JSON.stringify(this.dishesList))
+			console.log(JSON.stringify(this.dishesList2))
 			repcallPost('order/dishes/takeYourOrder',{
-   				"localNo":this.localNo,//手持设备编号 ,
+   				"localNo":localNo,//手持设备编号 ,
 				"operatorNo":this.operatorNo, //操作员代码 ,
 				"operatorPW": this.operatorPW,//操作员密码 ,
 				"takeOrderDtos": this.dataArr
    			},res=>{
+   				console.log(JSON.stringify(res))
+   				mui('.dialog_bl').button('reset');//切换为loading状态
    				if(res.code==0){
-   					mui('.dialog_bl').button('reset');//切换为loading状态
-   					mui.toast('下单成功!')
-   					localStorage.setItem('takeOrderDtos','')
+   					mui.toast('点菜成功!')
+   					//localStorage.setItem(this.RoomName,'')
    					this.isDialog2 = false
-   					this.checkboxList = []
-// 					for (var i = 0; i < this.dishesList.length; i++) {
-//						for (var j = 0; j < this.checkboxList.length; j++) {
-//						  if(this.dishesList[i].dishName==this.checkboxList[j].dishName){
-//						  	this.dishesList[i].sendBillSign==this.checkboxList[j].sendBillSign
-//						  }
-//						}
-//					}
-//					console.log(JSON.stringify(this.dishesList))
-//					localStorage.setItem('takeOrderDtos',JSON.stringify(this.dishesList))
+   					console.log(this.dishesList.filter(item => item.checked==true ))
+   					let dishesList2 = this.dishesList2
+   					let dataArr = this.dataArr
+   					console.log(JSON.stringify(this.dishesList2))
+					console.log(JSON.stringify(this.dataArr))
+					for (var i = 0; i < dishesList2.length; i++) {
+						for (var j = 0; j < dataArr.length; j++) {
+							if(dishesList2[i].dishNo==dataArr[j].dishNo){
+								console.log(i)
+								dishesList2.splice(i,1)
+							}
+						}
+					}
+   					dishesList2.map((item,index)=>{
+						dataArr.map(res=>{
+							if(item.dishNo==res.dishNo){
+								console.log(index)
+								dishesList2.splice(index,1)
+							}
+						})
+					})
+   					this.dishesList = this.dishesList.filter(item => item.checked==false )
+   					this.totalNumber = 0 
+   					this.totalPrice = 0 
+   					dishesList2.map((res,i)=>{
+						this.totalNumber+=res.amount
+					})
+   					this.dishesList.map((res,i)=>{
+						let price = res.amount*res.money
+						this.totalPrice+=price
+						res.src = ''
+					})
+   					this.dishesList2 = dishesList2
+					console.log(JSON.stringify(this.dishesList))
+					console.log(JSON.stringify(this.dishesList2))
+					localStorage.setItem(this.RoomName,JSON.stringify(this.dishesList))
    				}else{
    					if(res.data){
    						mui.toast(res.data)
    					}else{
    						mui.toast(res.msg)
    					}
-   					return
    				}
    			})
 		},
@@ -311,18 +429,7 @@ var vm = new Vue({
 				return
 			}else{
 				this.isDialog2 = true
-				this.dishesList.map(res=>{
-					if(res.checked){
-						this.dataArr.push(res)
-					}
-				})
-				//this.dataArr = this.checkboxList
-				this.dataArr.forEach(res=>{
-					this.del(res,['src','bigKindno','kindNo'])
-					res.sendBillSign=2
-				})
-				console.log(this.dataArr)
-				//bigKindno":"02","amount":1,"dishName":"安吉白茶","dishNo":"21024","money":"68.0000","remark":"","sendBillSign":2,"tableNo":"009
+				this.xiadan = 1//1即单2叫单
 			}
 		},
 		del(obj,keys){
@@ -340,21 +447,12 @@ var vm = new Vue({
 				return
 			}else{
 				this.isDialog2 = true
-				this.dishesList.map(res=>{
-					if(res.checked){
-						this.dataArr.push(res)
-					}
-				})
-				//this.dataArr = this.checkboxList
-				this.dataArr.forEach(res=>{
-					this.del(res,['src','bigKindno','kindNo'])
-					res.sendBillSign=3
-				})
+				this.xiadan = 2//1即单2叫单
 			}
 		},
 		closeBox(){
 			this.isDialog2=false
-			location.reload()
+			//location.reload()
 		},
 		//获取本地数据
 		loadTableData() {

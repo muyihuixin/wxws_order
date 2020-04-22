@@ -1,6 +1,10 @@
-var baseUrl = 'http://192.168.10.74:8080/'
-//var baseUrl = 'http://192.168.1.105:8080/'
-
+// var baseUrl = 'http://192.168.88.2:8080/'
+//var baseUrl = 'http://192.168.0.195:8080/'
+var ip = localStorage.getItem('ip') 
+var localNo =localStorage.getItem('yyd')
+console.log(ip+'////'+localNo)
+//var baseUrl = 'http://192.168.43.252:8080/'
+var baseUrl = 'http://'+ip+':8080/'
 function repcall(url,data,callback){
 	mui.ajax(baseUrl+url,{
 		data:data,
@@ -10,7 +14,7 @@ function repcall(url,data,callback){
 //		timeout:20000,
 		success:callback,
 		error:function(err){
-			mui.toast('服务器网络错误，请重试')
+			mui.toast('请检查IP地址和设备编号是否匹配后重试')
 //			vm.isGengxin = false
 //			clearInterval(interval);
 //			return
@@ -20,13 +24,15 @@ function repcall(url,data,callback){
 function repcallPost(url,data,callback){
 	mui.ajax(baseUrl+url,{
 		data:data,
-		dataType:'json',
+		dataType:"json",
 		type:'POST',
 		headers:{'Content-Type':'application/json'},	 
 		timeout:20000,
 		success:callback,
 		error:function(err){
-			mui.toast('服务器网络错误，请重试')
+			console.log(err)
+			console.log(JSON.stringify(err))
+			mui.toast('请检查IP地址和设备编号是否匹配后重试')
 //			wt.close()
 			return
 		}
@@ -40,7 +46,7 @@ function repcall2(url,data,callback){
 //		timeout:20000,
 		success:callback,
 		error:function(err){
-			mui.toast('网络错误，请重试')
+			mui.toast('请检查IP地址和设备编号是否匹配后重试')
 //			return
 		}
 	})

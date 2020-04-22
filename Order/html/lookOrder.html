@@ -171,7 +171,7 @@
 				<div class="dialog_c">
 					<div class="mui-input-row">
 						<label>原因</label>
-						<input type="text" placeholder="普通输入框" v-model="remark" readonly="readonly">
+						<input type="text" placeholder="普通输入框" v-model="remark">
 					</div>
 					<div class="mui-input-row">
 						<label>数量</label>
@@ -241,8 +241,10 @@
 				</div>
 			</div>
 			<div class="total_box">
-				<div class="total_money">总数量:<b>{{totalNum}}</b></div>
-				<div class="total_money">总金额:<b>￥{{totalPrice}}</b></div>
+				<div id="">
+					<div class="total_money">总数量:<b>{{totalNum}}</b></div>
+					<div class="total_money">总金额:<b>￥{{totalPrice}}</b></div>
+				</div>
 				<div class="jidan" @tap='addOrder'>继续点菜</div>
 			</div>
 		</div>

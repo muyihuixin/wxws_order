@@ -24,7 +24,7 @@
 		<div class="dialog">
 			<div class="dialog_close" @tap='closeBox'><img src="../img/close.png"/></div>
 			<div class="dialog_t">
-				下单
+				{{xiadan==1?'即单':xiadan==2?'叫单':''}}
 			</div>
 			<div class="dialog_c">
 				<div class="mui-input-row">
@@ -96,7 +96,7 @@
 				<div class="thead mui-row">
 					<ul>
 						<li style='width:10%'>序号</li>
-						<li style='width:15%'>图片</li>
+						<!--<li style='width:15%'>图片</li>-->
 						<li style='width:20%'>菜名</li>
 						<li style='width:10%'>数量</li>
 						<li style='width:15%'>价格</li>
@@ -114,9 +114,9 @@
 							</div>
 							<div class="content mui-slider-handle">
 								<span class="one" style='width:10%'>{{index+1}}</span>
-								<span class="img" style='width:15%'><img :src="item.src?item.src:'../img/kong.png'" alt="" /></span>
-								<span class="name" style='width:20%'>{{item.dishName}}</span>
-								<span class="" style='width:10%'>
+								<!--<span class="img" style='width:15%'><img :src="item.src?item.src:'../img/kong.png'" alt="" /></span>-->
+								<span class="name" style='width:25%'>{{item.dishName}}</span>
+								<span class="" style='width:13%'>
 									<div class="m-sel m-de-check">
 										<span @tap='reduction(item,index)' v-if="item.amount!=0">
 											<b>-</b>
@@ -128,12 +128,15 @@
 										</span>
 									</div>
 								</span>
-								<span class="" style='width:15%'>￥{{item.money.substring(0,item.money.length-2)}}</span>
-								<span class="" style='width:10%' v-for='i in cityClassify' v-if='i.no == item.kindNo'>{{i.name?i.name:'无'}}</span>
+								<span class="" style='width:13%'>￥{{item.money.substring(0,item.money.length-2)}}</span>
+								<span class="" style='width:17%' v-for='i in cityClassify' v-if='i.no == item.kindNo'>{{i.name?i.name:'无'}}</span>
 								<span class="" style='width:10%' v-if='!item.kindNo'>无</span>
 								<span class="" style='width:10%'>{{item.remark?item.remark:'无'}}</span>
-								<span class="chooseBox" style='width:10%'   @tap="checkedOne(index)">
-									<input name="checkbox2" type="checkbox" id="checkbox_a1" class="chk_1" ref='input1' v-model="item.checked" :value="item.checked" v-if='item.sendBillSign!=2&&item.sendBillSign!=3'>
+								<span class="chooseBox" style='width:10%'>
+									<label for="label" class='' @tap="checkedOne(index)">
+							            <input type="checkbox" id="label" v-model="item.checked" :value="item.checked"  ref='input1' >
+							        </label>
+									<!--<input name="checkbox2" type="checkbox" id="checkbox_a1" class="chk_1" ref='input1' v-model="item.checked" :value="item.checked" v-if='item.sendBillSign!=2&&item.sendBillSign!=3'>-->
 									<!--<input name="checkbox2" type="checkbox" id="checkbox_a1" class="chk_1" ref='input1' v-model='checkboxList' :value="item" v-if='item.sendBillSign!=2&&item.sendBillSign!=3' @tap="item.checked=!item.checked">-->
 									<!--<input name="checkbox2" value="Item2" type="checkbox" class="checkbox2" v-model='checkboxList' :value="item.text">-->
 									<label for="checkbox_a1" v-if='item.sendBillSign!=2&&item.sendBillSign!=3'></label> 
@@ -145,16 +148,23 @@
 				</div>
 			</div>
 			<div class="total_box">
-				<div class="left mui-input-row mui-checkbox mui-left">
-					<input name="checkbox1" :value="checked" type="checkbox" id="checkbox_a1" class="chk_1"  v-model='checked' @tap='checkedAll' >
+				<!--<div class="left mui-input-row mui-checkbox mui-left">-->
+					<!--<input name="checkbox1" type="checkbox" id="checkbox_a1" class="chk_1" v-model='checked' @tap='checkedAll' >-->
 					<!--<input name="checkbox1" value="Item1" type="checkbox" id="checkbox_a1" class="chk_1"  v-model='checked' @tap='checkedAll' >-->
 					<!--<input name="checkbox1" value="Item1" type="checkbox" class="checkbox1"  v-model='checked' v-on:click='checkedAll' >-->
-					<div class="companyName">全选</div>
+					<!--<div class="companyName">全选</div>
+				</div>-->
+				<label for="label" @tap='checkedAll' class='allChoose'>
+		            <input type="checkbox" id="label" v-model="checked" >全选
+		        </label>
+				<!--:value="checked"-->
+				<div id="">
+					<div class="total_money">总金额:<b>￥{{totalPrice}}</b></div>
+					<div class="continue_order" @tap='addDishes'>继续点菜</div>
+					<div class="jidan" @tap='jidan'>即单</div>
+					<div class="jiaodan" @tap='jiaodan'>叫单</div>
 				</div>
-				<div class="total_money">总金额:<b>￥{{totalPrice}}</b></div>
-				<div class="continue_order" @tap='addDishes'>继续点菜</div>
-				<div class="jidan" @tap='jidan'>即单</div>
-				<div class="jiaodan" @tap='jiaodan'>叫单</div>
+				
 			</div>
 		</div>
 	</div>

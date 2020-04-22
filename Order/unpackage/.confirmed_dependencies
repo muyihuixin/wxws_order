@@ -10,7 +10,13 @@
 			"html/orderRoom.html",
 			"html/orderStar.html"
 		],
-		"resources": []
+		"resources": [
+			"img/btn-xuanzhong@2x.png",
+			"img/btn-tupian1@2x.png",
+			"img/close.png",
+			"img/btn-dangan@2x.png",
+			"img/btn-shiping1@2x.png"
+		]
 	},
 	"html/openRoom.html": {
 		"refer": [

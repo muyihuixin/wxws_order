@@ -245,7 +245,19 @@
 	    -o-transition: width .6s ease;
 	    transition: width .6s ease;
 	    }
-		
+		.ipInput{
+			display: flex;
+			justify-content: center;
+		}
+		.input1{
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.ipInput input{
+			width: 50%;
+			margin: 0;
+		}
     </style>
 </head>
 <body>
@@ -260,6 +272,10 @@
 			</div>
 			<div class="menuTitle">{{item.name}}</div>
 		</div>
+	</div>
+	<div class="ipInput">
+		<div class="input1"><label for="ip">IP地址：</label><input type="text" name="ip" v-model="ip" placeholder="请输入IP地址"/></div>
+		<div class="input1"><label for="yyd">设备编号：</label><input type="number" name="yyd" v-model="yyd" placeholder="请输入设备编号"/></div>
 	</div>
 	<!--弹框-->
 	<div class="dialogBox" v-if="isDialog"> 
@@ -300,6 +316,7 @@
 <script src="js/base.js"></script>
 <script src="js/vue.min.js"></script>
 <script type="text/javascript">
+//var baseUrl = 'http://'+ip+':8080/'
 mui.init();
 mui.plusReady(function(){                     
     plus.webview.currentWebview().setStyle({
@@ -322,6 +339,13 @@ var vm = new Vue({
 		isDialog:false,
 		isGengxin:false,
 		lineProgress:0,
+		ip:'',//手动配置IP地址
+		yyd:'',//每一个ipad的营业点
+	},
+	created(){
+		console.log(localStorage.getItem('ip')+'///'+localStorage.getItem('yyd'))
+		this.yyd = localStorage.getItem('yyd')?localStorage.getItem('yyd'):'' 
+		this.ip = localStorage.getItem('ip')?localStorage.getItem('ip'):''
 	},
 	watch:{
 		lineProgress(oldVal,newVal){
@@ -334,14 +358,22 @@ var vm = new Vue({
 	},
 	methods:{
 		jump(url){
-			if(url!=''){
-				mui.openWindow({
-					url:url,
-					id: url,
-				})
+			console.log(this.ip&&this.yyd)
+			//首先判断ip地址和营业点
+			if(!this.ip||!this.yyd){
+				mui.toast('IP地址和营业点不能为空！')
 			}else{
-				this.isDialog=true
-			}	
+				localStorage.setItem('ip',this.ip) 
+				localStorage.setItem('yyd',this.yyd)
+				if(url!=''){
+					mui.openWindow({
+						url:url,
+						id: url,
+					})
+				}else{
+					this.isDialog=true
+				}	
+			}
 		},
 		closeGengxin(){//取消更新
 			console.log(this.lineProgress)
